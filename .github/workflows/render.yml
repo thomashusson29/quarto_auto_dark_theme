@@ -1,0 +1,95 @@
+name: Render examples
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: r-lib/actions/setup-r@v2
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::dplyr
+            any::ggplot2
+            any::gt
+            any::gtsummary
+            any::magick
+            any::flowchart
+            any::forestplot
+            any::rpart.plot
+            any::pROC
+            any::withr
+
+      - name: Render root HTML example
+        run: quarto render template.qmd --to auto-dark-html
+
+      - name: Render RevealJS example
+        run: quarto render examples/revealjs.qmd --to auto-dark-clean-revealjs
+
+      - name: Test local extension installation
+        run: |
+          tmp="$(mktemp -d)"
+          cd "$tmp"
+          quarto add "$GITHUB_WORKSPACE" --no-prompt
+
+          cat > _quarto.yml <<'YAML'
+          project:
+            type: default
+          YAML
+
+          cat > root-test.qmd <<'QMD'
+          ---
+          title: "Root test"
+          format:
+            auto-dark-html: default
+          execute:
+            warning: false
+            message: false
+          ---
+
+          ```{r}
+          #| include: false
+          auto_dark_setup <- c(
+            "_extensions/thomashusson29/auto-dark/auto-dark-setup.R",
+            "_extensions/auto-dark/auto-dark-setup.R"
+          )
+          source(auto_dark_setup[file.exists(auto_dark_setup)][[1]])
+          auto_dark_on()
+          plot(mtcars$wt, mtcars$mpg)
+          ```
+          QMD
+
+          mkdir -p subdir
+          cat > subdir/subdir-test.qmd <<'QMD'
+          ---
+          title: "Subdir test"
+          format:
+            auto-dark-html: default
+          execute:
+            warning: false
+            message: false
+          ---
+
+          ```{r}
+          #| include: false
+          auto_dark_setup <- c(
+            "../_extensions/thomashusson29/auto-dark/auto-dark-setup.R",
+            "../_extensions/auto-dark/auto-dark-setup.R"
+          )
+          source(auto_dark_setup[file.exists(auto_dark_setup)][[1]])
+          auto_dark_on()
+          plot(mtcars$wt, mtcars$mpg)
+          ```
+          QMD
+
+          quarto render root-test.qmd --to auto-dark-html
+          quarto render subdir/subdir-test.qmd --to auto-dark-html

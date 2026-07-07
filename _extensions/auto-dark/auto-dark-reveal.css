@@ -1,0 +1,309 @@
+html.auto-dark-theme-dark,
+body.auto-dark-theme-dark,
+body.quarto-dark {
+  background-color: var(--auto-dark-bg) !important;
+}
+
+html.auto-dark-theme-light,
+body.auto-dark-theme-light,
+body.quarto-light {
+  background-color: #ffffff !important;
+}
+
+html.auto-dark-theme-light .reveal,
+body.auto-dark-theme-light .reveal,
+body.quarto-light .reveal {
+  --r-background-color: #ffffff;
+  --r-main-color: #131516;
+  --r-heading-color: #131516;
+  --r-link-color: #107895;
+  --r-link-color-hover: #0f5f75;
+  --r-selection-background-color: #dbeafe;
+  color: #131516;
+  background-color: #ffffff !important;
+}
+
+html.auto-dark-theme-dark .reveal,
+body.auto-dark-theme-dark .reveal,
+body.quarto-dark .reveal {
+  --r-background-color: var(--auto-dark-bg);
+  --r-main-color: var(--auto-dark-text);
+  --r-heading-color: var(--auto-dark-text-strong);
+  --r-link-color: var(--auto-dark-link);
+  --r-link-color-hover: #98c379;
+  --r-selection-background-color: var(--auto-dark-border);
+  color: var(--auto-dark-text);
+  background-color: var(--auto-dark-bg) !important;
+}
+
+html.auto-dark-theme-dark .reveal .slides,
+body.auto-dark-theme-dark .reveal .slides,
+body.quarto-dark .reveal .slides {
+  color: var(--auto-dark-text);
+}
+
+html.auto-dark-theme-light .reveal .slides,
+body.auto-dark-theme-light .reveal .slides,
+body.quarto-light .reveal .slides {
+  color: #131516;
+}
+
+html.auto-dark-theme-light .reveal .slide-background,
+html.auto-dark-theme-light .reveal .backgrounds,
+body.auto-dark-theme-light .reveal .slide-background,
+body.auto-dark-theme-light .reveal .backgrounds,
+body.quarto-light .reveal .slide-background,
+body.quarto-light .reveal .backgrounds {
+  background-color: #ffffff !important;
+}
+
+html.auto-dark-theme-dark .reveal .slide-background,
+html.auto-dark-theme-dark .reveal .backgrounds,
+body.auto-dark-theme-dark .reveal .slide-background,
+body.auto-dark-theme-dark .reveal .backgrounds,
+body.quarto-dark .reveal .slide-background,
+body.quarto-dark .reveal .backgrounds {
+  background-color: var(--auto-dark-bg) !important;
+}
+
+html.auto-dark-theme-dark .reveal h1,
+html.auto-dark-theme-dark .reveal h2,
+html.auto-dark-theme-dark .reveal h3,
+html.auto-dark-theme-dark .reveal h4,
+html.auto-dark-theme-dark .reveal h5,
+html.auto-dark-theme-dark .reveal h6,
+body.auto-dark-theme-dark .reveal h1,
+body.auto-dark-theme-dark .reveal h2,
+body.auto-dark-theme-dark .reveal h3,
+body.auto-dark-theme-dark .reveal h4,
+body.auto-dark-theme-dark .reveal h5,
+body.auto-dark-theme-dark .reveal h6,
+body.quarto-dark .reveal h1,
+body.quarto-dark .reveal h2,
+body.quarto-dark .reveal h3,
+body.quarto-dark .reveal h4,
+body.quarto-dark .reveal h5,
+body.quarto-dark .reveal h6 {
+  color: var(--auto-dark-text-strong);
+}
+
+html.auto-dark-theme-light .reveal h1,
+html.auto-dark-theme-light .reveal h2,
+body.auto-dark-theme-light .reveal h1,
+body.auto-dark-theme-light .reveal h2,
+body.quarto-light .reveal h1,
+body.quarto-light .reveal h2 {
+  color: #131516;
+}
+
+html.auto-dark-theme-light .reveal h3,
+body.auto-dark-theme-light .reveal h3,
+body.quarto-light .reveal h3 {
+  color: #107895;
+}
+
+html.auto-dark-theme-light .reveal h4,
+body.auto-dark-theme-light .reveal h4,
+body.quarto-light .reveal h4 {
+  color: #9a2515;
+}
+
+html.auto-dark-theme-light #title-slide .title,
+html.auto-dark-theme-light #title-slide .author,
+html.auto-dark-theme-light #title-slide .quarto-title-author-name,
+body.auto-dark-theme-light #title-slide .title,
+body.auto-dark-theme-light #title-slide .author,
+body.auto-dark-theme-light #title-slide .quarto-title-author-name,
+body.quarto-light #title-slide .title,
+body.quarto-light #title-slide .author,
+body.quarto-light #title-slide .quarto-title-author-name {
+  color: #131516 !important;
+}
+
+html.auto-dark-theme-light #title-slide .subtitle,
+body.auto-dark-theme-light #title-slide .subtitle,
+body.quarto-light #title-slide .subtitle {
+  color: #107895 !important;
+}
+
+html.auto-dark-theme-dark #title-slide .title,
+html.auto-dark-theme-dark #title-slide .author,
+html.auto-dark-theme-dark #title-slide .quarto-title-author-name,
+body.auto-dark-theme-dark #title-slide .title,
+body.auto-dark-theme-dark #title-slide .author,
+body.auto-dark-theme-dark #title-slide .quarto-title-author-name,
+body.quarto-dark #title-slide .title,
+body.quarto-dark #title-slide .author,
+body.quarto-dark #title-slide .quarto-title-author-name {
+  color: var(--auto-dark-text-strong) !important;
+}
+
+html.auto-dark-theme-dark #title-slide .subtitle,
+body.auto-dark-theme-dark #title-slide .subtitle,
+body.quarto-dark #title-slide .subtitle {
+  color: var(--auto-dark-link) !important;
+}
+
+html.auto-dark-theme-dark .reveal blockquote,
+body.auto-dark-theme-dark .reveal blockquote,
+body.quarto-dark .reveal blockquote {
+  background-color: var(--auto-dark-panel);
+  border-left-color: var(--auto-dark-link);
+}
+
+html.auto-dark-theme-dark .reveal table:not(.gt_table) thead th,
+html.auto-dark-theme-dark .reveal .slides table:not(.gt_table) tr:last-child td,
+html.auto-dark-theme-dark .reveal .slides table:not(.gt_table),
+body.auto-dark-theme-dark .reveal table:not(.gt_table) thead th,
+body.auto-dark-theme-dark .reveal .slides table:not(.gt_table) tr:last-child td,
+body.auto-dark-theme-dark .reveal .slides table:not(.gt_table),
+body.quarto-dark .reveal table:not(.gt_table) thead th,
+body.quarto-dark .reveal .slides table:not(.gt_table) tr:last-child td,
+body.quarto-dark .reveal .slides table:not(.gt_table) {
+  border-bottom-color: var(--auto-dark-border-strong);
+}
+
+html.auto-dark-theme-light .reveal table:not(.gt_table),
+body.auto-dark-theme-light .reveal table:not(.gt_table),
+body.quarto-light .reveal table:not(.gt_table) {
+  color: #131516;
+}
+
+.reveal .gt_table {
+  font-size: 0.92em !important;
+}
+
+.reveal .gt_table .gt_footnotes,
+.reveal .gt_table .gt_source_notes,
+.reveal .gt_table .gt_sourcenotes,
+.reveal .gt_table .gt_footnote,
+.reveal .gt_table .gt_source_note {
+  font-size: 0.86em !important;
+}
+
+html.auto-dark-theme-light .reveal table:not(.gt_table) thead th,
+html.auto-dark-theme-light .reveal .slides table:not(.gt_table) tr:last-child td,
+html.auto-dark-theme-light .reveal .slides table:not(.gt_table),
+body.auto-dark-theme-light .reveal table:not(.gt_table) thead th,
+body.auto-dark-theme-light .reveal .slides table:not(.gt_table) tr:last-child td,
+body.auto-dark-theme-light .reveal .slides table:not(.gt_table),
+body.quarto-light .reveal table:not(.gt_table) thead th,
+body.quarto-light .reveal .slides table:not(.gt_table) tr:last-child td,
+body.quarto-light .reveal .slides table:not(.gt_table) {
+  border-bottom-color: #d3d3d3;
+}
+
+html.auto-dark-theme-light .reveal .cell-output pre,
+body.auto-dark-theme-light .reveal .cell-output pre,
+body.quarto-light .reveal .cell-output pre,
+html.auto-dark-theme-light .reveal .cell-output pre code,
+body.auto-dark-theme-light .reveal .cell-output pre code,
+body.quarto-light .reveal .cell-output pre code {
+  color: #131516 !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+}
+
+html.auto-dark-theme-dark .reveal .cell-output pre,
+body.auto-dark-theme-dark .reveal .cell-output pre,
+body.quarto-dark .reveal .cell-output pre,
+html.auto-dark-theme-dark .reveal .cell-output pre code,
+body.auto-dark-theme-dark .reveal .cell-output pre code,
+body.quarto-dark .reveal .cell-output pre code {
+  color: var(--auto-dark-text) !important;
+  background-color: var(--auto-dark-panel) !important;
+  border-color: var(--auto-dark-border-strong) !important;
+}
+
+html.auto-dark-theme-light .reveal .cell-output,
+body.auto-dark-theme-light .reveal .cell-output,
+body.quarto-light .reveal .cell-output {
+  color: #131516;
+}
+
+html.auto-dark-theme-dark .reveal .cell-output,
+body.auto-dark-theme-dark .reveal .cell-output,
+body.quarto-dark .reveal .cell-output {
+  color: var(--auto-dark-text);
+}
+
+html.auto-dark-theme-light .auto-dark-render-dark,
+body.auto-dark-theme-light .auto-dark-render-dark,
+html.auto-dark-theme-dark .auto-dark-render-light,
+body.auto-dark-theme-dark .auto-dark-render-light {
+  display: none !important;
+}
+
+html.auto-dark-theme-light .auto-dark-render-light,
+body.auto-dark-theme-light .auto-dark-render-light,
+html.auto-dark-theme-dark .auto-dark-render-dark,
+body.auto-dark-theme-dark .auto-dark-render-dark {
+  display: block;
+}
+
+.auto-dark-switch {
+  position: fixed;
+  top: 8px;
+  right: 38px;
+  z-index: 10000;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: #57606a;
+  font: 400 16px/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  cursor: pointer;
+  opacity: 0.72;
+  box-shadow: none;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, opacity 120ms ease;
+}
+
+.auto-dark-switch[data-auto-dark-target="dark"] .auto-dark-switch-icon::before {
+  content: "☾";
+}
+
+.auto-dark-switch[data-auto-dark-target="light"] .auto-dark-switch-icon::before {
+  content: "☀";
+}
+
+.auto-dark-switch:hover,
+.auto-dark-switch:focus-visible {
+  outline: none;
+  border-color: var(--auto-dark-link);
+  background: rgba(97, 175, 239, 0.1);
+  color: var(--auto-dark-link);
+  opacity: 1;
+  box-shadow: none;
+}
+
+html.auto-dark-theme-dark .auto-dark-switch,
+body.auto-dark-theme-dark .auto-dark-switch,
+body.quarto-dark .auto-dark-switch {
+  background: transparent;
+  color: var(--auto-dark-text-muted);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+html.auto-dark-theme-dark .auto-dark-switch:hover,
+html.auto-dark-theme-dark .auto-dark-switch:focus-visible,
+body.auto-dark-theme-dark .auto-dark-switch:hover,
+body.auto-dark-theme-dark .auto-dark-switch:focus-visible,
+body.quarto-dark .auto-dark-switch:hover,
+body.quarto-dark .auto-dark-switch:focus-visible {
+  background: rgba(97, 175, 239, 0.12);
+  color: var(--auto-dark-link);
+  border-color: rgba(97, 175, 239, 0.36);
+}
+
+@media print {
+  .auto-dark-switch {
+    display: none !important;
+  }
+}

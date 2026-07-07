@@ -1,0 +1,135 @@
+---
+title: "Auto Dark RevealJS Example"
+format:
+  auto-dark-clean-revealjs:
+    slide-number: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+auto_dark_setup <- c(
+  "../_extensions/thomashusson29/auto-dark/auto-dark-setup.R",
+  "../_extensions/auto-dark/auto-dark-setup.R"
+)
+auto_dark_setup <- auto_dark_setup[file.exists(auto_dark_setup)]
+if (!length(auto_dark_setup)) {
+  stop("Cannot find auto-dark-setup.R. Run `quarto add thomashusson29/quarto_auto_dark_theme` first.")
+}
+source(auto_dark_setup[[1]])
+auto_dark_on()
+
+library(dplyr)
+library(ggplot2)
+library(gt)
+library(gtsummary)
+library(flowchart)
+library(forestplot)
+library(rpart)
+library(rpart.plot)
+library(pROC)
+```
+
+## ggplot2
+
+```{r}
+#| label: fig-ggplot
+#| fig-width: 10
+#| fig-height: 5.2
+#| out-width: "90%"
+ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+  geom_point(size = 3, alpha = 0.9) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.8) +
+  labs(x = "Weight", y = "Miles per gallon", color = "Cylinders") +
+  theme_minimal(base_size = 13)
+```
+
+## flowchart
+
+```{r}
+#| label: fig-flowchart
+#| fig-width: 8
+#| fig-height: 4
+#| out-width: "85%"
+flow_data <- tibble(
+  id = seq_len(120),
+  eligible = id <= 96,
+  analysed = id <= 84
+)
+
+flow_data |>
+  flowchart::as_fc(label = "Screened", text_pattern = "{label}\nN = {N}") |>
+  flowchart::fc_filter(eligible, label = "Eligible") |>
+  flowchart::fc_filter(analysed, label = "Analysed") |>
+  flowchart::fc_draw()
+```
+
+## forestplot
+
+```{r}
+#| label: fig-forestplot
+#| fig-width: 8
+#| fig-height: 4.2
+#| out-width: "90%"
+forestplot::forestplot(
+  labeltext = cbind(
+    c("Variable", "Age", "Diabetes", "ASA 3-4"),
+    c("OR [95% CI]", "1.20 [0.95; 1.51]", "1.85 [1.10; 3.11]", "0.82 [0.50; 1.34]")
+  ),
+  mean = c(NA, 1.20, 1.85, 0.82),
+  lower = c(NA, 0.95, 1.10, 0.50),
+  upper = c(NA, 1.51, 3.11, 1.34),
+  zero = 1,
+  boxsize = 0.18,
+  col = forestplot::fpColors(box = "#2A6F97", line = "#2A6F97", zero = "#555555")
+)
+```
+
+## CART and ROC
+
+```{r}
+#| label: fig-cart
+#| fig-width: 7.5
+#| fig-height: 4.4
+#| out-width: "78%"
+#| fig-keep: last
+cart_fit <- rpart::rpart(factor(am) ~ mpg + wt + cyl, data = mtcars)
+rpart.plot::rpart.plot(cart_fit, type = 2, extra = 104, fallen.leaves = TRUE)
+```
+
+```{r}
+#| label: fig-roc
+#| fig-width: 7
+#| fig-height: 4
+#| out-width: "78%"
+roc_obj <- pROC::roc(mtcars$am, mtcars$mpg, quiet = TRUE)
+pROC::ggroc(roc_obj, colour = "#61afef", linewidth = 1.1) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "#e06c75") +
+  labs(x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 13)
+```
+
+## gtsummary
+
+```{r}
+gtsummary::trial |>
+  select(age, grade, trt) |>
+  tbl_summary(by = trt, missing = "no") |>
+  add_p() |>
+  as_gt()
+```
+
+## Code and table
+
+```{r}
+head(mtcars[, c("mpg", "cyl", "wt")])
+```
+
+| Item | Value |
+|---|---:|
+| Light mode | clean-like |
+| Dark mode | One Dark |
