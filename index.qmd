@@ -1,0 +1,55 @@
+---
+title: "Quarto Auto Dark Theme"
+format:
+  auto-dark-html:
+    toc: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("_extensions/auto-dark/auto-dark-setup.R")
+auto_dark_on()
+```
+
+## Robust One Dark output for Quarto
+
+`quarto_auto_dark_theme` is a reusable Quarto extension for static HTML
+documents and RevealJS presentations. It combines Quarto's native theme switch,
+One Dark CSS, `gt`/`gtsummary` table styling, and render-time companion images
+for R plots.
+
+## Examples
+
+- [HTML document example](template.html)
+- [RevealJS presentation example](examples/revealjs.html)
+- [GitHub repository](https://github.com/thomashusson29/quarto_auto_dark_theme)
+
+## Minimal Usage
+
+```yaml
+format:
+  auto-dark-html:
+    toc: true
+```
+
+```r
+source("_extensions/thomashusson29/auto-dark/auto-dark-setup.R")
+auto_dark_on()
+```
+
+## What Is Covered
+
+| Output | Strategy |
+|---|---|
+| `ggplot2`, base R, CART, ROC, `forestplot` | Render-time `*-auto-dark.*` companion images |
+| `flowchart` | Transparent canvas adapter plus companion images |
+| `knitr::include_graphics()` | Local PNG/JPEG/WebP companion images |
+| `gt` / `gtsummary` | Targeted One Dark CSS |
+| RevealJS | Icon switch plus shared companion-image logic |
+
+PDF output is intentionally unchanged.

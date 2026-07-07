@@ -1,0 +1,80 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: actions/configure-pages@v5
+
+      - uses: r-lib/actions/setup-r@v2
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::dplyr
+            any::ggplot2
+            any::gt
+            any::gtsummary
+            any::magick
+            any::flowchart
+            any::forestplot
+            any::rpart.plot
+            any::pROC
+
+      - name: Render pages and examples
+        run: |
+          quarto render index.qmd --to auto-dark-html
+          quarto render template.qmd --to auto-dark-html
+          quarto render examples/revealjs.qmd --to auto-dark-clean-revealjs
+
+      - name: Assemble site artifact
+        run: |
+          mkdir -p _site/examples
+
+          cp index.html _site/index.html
+          cp template.html _site/template.html
+          cp -R _extensions _site/_extensions
+
+          cp -R template_files _site/template_files
+          cp -R generated _site/generated
+          cp auto-dark-renderings.js _site/auto-dark-renderings.js
+
+          cp examples/revealjs.html _site/examples/revealjs.html
+          cp -R examples/revealjs_files _site/examples/revealjs_files
+          cp examples/auto-dark-renderings.js _site/examples/auto-dark-renderings.js
+          cp examples/auto-dark-reveal-init.js _site/examples/auto-dark-reveal-init.js
+          cp examples/auto-dark-reveal.js _site/examples/auto-dark-reveal.js
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

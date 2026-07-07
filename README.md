@@ -15,6 +15,11 @@ It is designed for broad static Quarto output: `ggplot2`, base R graphics,
 
 ## Installation
 
+Live examples:
+
+- [HTML document example](https://thomashusson29.github.io/quarto_auto_dark_theme/template.html)
+- [RevealJS presentation example](https://thomashusson29.github.io/quarto_auto_dark_theme/examples/revealjs.html)
+
 Install from GitHub:
 
 ```bash
@@ -176,6 +181,10 @@ CSS filtering for a specific output.
   time.
 
 ## Examples
+
+The examples are also published on GitHub Pages:
+
+- <https://thomashusson29.github.io/quarto_auto_dark_theme/>
 
 Render the HTML example:
 
