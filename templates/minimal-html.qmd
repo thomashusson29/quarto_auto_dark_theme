@@ -1,0 +1,48 @@
+---
+title: "My Report"
+format:
+  auto-dark-html:
+    toc: true
+    toc-depth: 2
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# If installed from GitHub (quarto add thomashusson29/quarto_auto_dark_theme):
+source("_extensions/thomashusson29/auto-dark/auto-dark-setup.R")
+
+# If installed from a local checkout (quarto add /path/to/repo):
+# source("_extensions/auto-dark/auto-dark-setup.R")
+
+# If this .qmd is in a subfolder, go up one level:
+# source("../_extensions/thomashusson29/auto-dark/auto-dark-setup.R")
+
+auto_dark_on()
+
+library(ggplot2)
+```
+
+## Introduction
+
+Your content here. The document opens in dark mode if your OS is set to dark mode,
+and the toggle button in the header lets users switch manually.
+
+## A plot
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.5
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 3, alpha = 0.9) +
+  labs(x = "Weight", y = "MPG", colour = "Cylinders") +
+  theme_minimal(base_size = 13)
+```
+
+The plot background is transparent — the One Dark page background shows through.
+In light mode, the standard Cosmo theme is used.

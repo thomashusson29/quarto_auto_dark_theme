@@ -1,7 +1,25 @@
 title: Auto Dark Clean
 author: Thomas Husson
-version: 0.1.0
+version: 0.2.0
 quarto-required: ">=1.7.0"
+
+# This extension is a thin RevealJS wrapper around the auto-dark extension.
+# It re-uses CSS and JS from _extensions/auto-dark/ via relative paths.
+#
+# IMPORTANT: both auto-dark and auto-dark-clean must be installed in the same
+# _extensions/ folder. If you install auto-dark-clean without auto-dark, the
+# relative paths below will fail.
+#
+# The shared files are:
+#   ../auto-dark/auto-dark.css           — One Dark palette + core dark styles
+#   ../auto-dark/auto-dark-reveal.css    — RevealJS-specific dark styles
+#   ../auto-dark/auto-dark-plot-filter.css — fallback CSS filter for plots
+#   ../auto-dark/auto-dark-gt-reveal.css — gt table sizing in RevealJS
+#   ../auto-dark/auto-dark-switch.css    — ☾/☀ button styles
+#   ../auto-dark/auto-dark-reveal-init.js — early theme class injection (<head>)
+#   ../auto-dark/auto-dark-reveal.js     — RevealJS theme switch + image pairs
+#   ../auto-dark/auto-dark-renderings.js — companion image injection
+
 contributes:
   formats:
     revealjs:
@@ -16,7 +34,6 @@ contributes:
       css:
         - ../auto-dark/auto-dark.css
         - ../auto-dark/auto-dark-reveal.css
-        - ../auto-dark/auto-dark-palette.css
         - ../auto-dark/auto-dark-plot-filter.css
         - ../auto-dark/auto-dark-gt-reveal.css
         - ../auto-dark/auto-dark-switch.css

@@ -1,43 +1,155 @@
 # Quarto Auto Dark Theme
 
-Reusable Quarto extension for robust One Dark HTML documents and RevealJS
-presentations.
+Quarto extension for One Dark–style documents and RevealJS presentations.
 
-The extension keeps the public format names short:
+Applies automatically when the user's OS is in dark mode. Includes transparent plot
+backgrounds, dark companion images for all figure types, and styled `gt`/`gtsummary`
+tables — with no extra configuration beyond `auto_dark_on()`.
 
-- `auto-dark-html`
-- `auto-dark-revealjs`
-- `auto-dark-clean-revealjs`
-
-It is designed for broad static Quarto output: `ggplot2`, base R graphics,
-`flowchart`, `forestplot`, CART plots, ROC plots, images inserted with
-`knitr::include_graphics()`, and `gt`/`gtsummary` tables.
-
-## Installation
+OS-level dark mode detection is adapted from
+[gadenbuie/quarto-auto-dark](https://github.com/gadenbuie/quarto-auto-dark) by Garrick
+Aden-Buie (MIT). Only the Lua filter mechanism is borrowed; the One Dark palette and
+companion-image workflow are original.
 
 Live examples:
 
-- [HTML document example](https://thomashusson29.github.io/quarto_auto_dark_theme/template.html)
-- [RevealJS presentation example](https://thomashusson29.github.io/quarto_auto_dark_theme/examples/revealjs.html)
+- [HTML document](https://thomashusson29.github.io/quarto_auto_dark_theme/template.html)
+- [RevealJS presentation](https://thomashusson29.github.io/quarto_auto_dark_theme/examples/revealjs.html)
 
-Install from GitHub:
+---
+
+## Quickstart
+
+### 1 — Install
 
 ```bash
 quarto add thomashusson29/quarto_auto_dark_theme
 ```
 
-Install from a local checkout:
+This creates two folders in your project:
 
-```bash
-quarto add /path/to/quarto_auto_dark_theme --no-prompt
+```
+_extensions/
+  thomashusson29/
+    auto-dark/          ← core extension (CSS, JS, R, Lua)
+    auto-dark-clean/    ← thin RevealJS wrapper
 ```
 
-This creates `_extensions/auto-dark` and `_extensions/auto-dark-clean` in your
-project.
+### 2 — Set up your document
 
-## Usage
+Add the format and a setup chunk:
 
-For an HTML document at the project root:
+````qmd
+---
+title: "My report"
+format: auto-dark-html
+---
+
+```{r}
+#| include: false
+source("_extensions/thomashusson29/auto-dark/auto-dark-setup.R")
+auto_dark_on()
+```
+````
+
+### 3 — Render
+
+```bash
+quarto render my-report.qmd
+```
+
+That's it. Your document now has:
+
+- One Dark background (`#282c34`) in dark mode, Cosmo theme in light mode
+- Automatic OS-level dark mode on first load
+- Manual light/dark toggle in the document header
+- Transparent plot backgrounds
+- Dark companion images for every figure
+- Styled `gt`/`gtsummary` tables
+
+---
+
+## GitHub Pages (with `/docs` output)
+
+This is the recommended setup for publishing on GitHub Pages from a `/docs` folder.
+
+### Project layout
+
+```
+my-project/
+├── _quarto.yml          ← project config
+├── _extensions/         ← installed by quarto add
+├── .nojekyll            ← required (see below)
+├── docs/
+│   └── .nojekyll        ← also required in docs/
+├── report.qmd
+└── index.qmd
+```
+
+### `_quarto.yml`
+
+```yaml
+project:
+  type: default
+  output-dir: docs
+
+format:
+  auto-dark-html:
+    toc: true
+```
+
+### Why two `.nojekyll` files?
+
+GitHub Pages runs Jekyll by default. Jekyll silently drops any folder whose name starts
+with `_`, including `_extensions/`. The extension's JavaScript (`auto-dark-renderings.js`)
+needs to be served — without it, dark companion images are never swapped in.
+
+- `.nojekyll` at the **repo root** — disables Jekyll for the whole repo.
+- `docs/.nojekyll` — disables Jekyll specifically for the `docs/` output folder
+  (required when using `output-dir: docs` or when GitHub Pages is configured to serve
+  from `docs/`).
+
+```bash
+touch .nojekyll docs/.nojekyll
+```
+
+You only need to do this once. Commit both files.
+
+### GitHub Pages settings
+
+In your repository → Settings → Pages:
+
+- **Source**: Deploy from a branch
+- **Branch**: `main` (or your default branch)
+- **Folder**: `/docs`
+
+### Full workflow
+
+```bash
+# 1. Create docs/ output folder and .nojekyll files (once)
+mkdir -p docs
+touch .nojekyll docs/.nojekyll
+
+# 2. Render your project
+quarto render
+
+# 3. Commit and push
+git add .
+git commit -m "Render"
+git push
+```
+
+GitHub Actions will pick up the push and deploy from `docs/`.
+
+> **Note**: OS dark mode detection requires `https://`. It will not work if you open
+> an HTML file directly from your filesystem (`file://`). On GitHub Pages it works
+> automatically.
+
+---
+
+## Usage details
+
+### HTML document
 
 ```yaml
 ---
@@ -45,41 +157,20 @@ title: "My report"
 format:
   auto-dark-html:
     toc: true
+    toc-depth: 2
 ---
 ```
 
-Add this once in a hidden setup chunk:
+Setup chunk (hidden, runs once):
 
 ```r
+#| label: setup
+#| include: false
 source("_extensions/thomashusson29/auto-dark/auto-dark-setup.R")
 auto_dark_on()
 ```
 
-If the `.qmd` is in a subfolder, adapt the path:
-
-```r
-source("../_extensions/thomashusson29/auto-dark/auto-dark-setup.R")
-auto_dark_on()
-```
-
-When installing from a local path with `quarto add /path/to/repo`, Quarto may
-install the extension as `_extensions/auto-dark` instead. In that case, use the
-same path without the GitHub owner:
-
-```r
-source("_extensions/auto-dark/auto-dark-setup.R")
-auto_dark_on()
-```
-
-For subfolder rendering, keep a Quarto project root next to `_extensions`:
-
-```yaml
-# _quarto.yml
-project:
-  type: default
-```
-
-For RevealJS:
+### RevealJS presentation
 
 ```yaml
 ---
@@ -90,125 +181,149 @@ format:
 ---
 ```
 
-Then use the same setup chunk, with the relative path adjusted to the `.qmd`
-location.
+Same setup chunk, same path.
 
-## How It Works
+### Document in a subfolder
 
-The extension uses a hybrid approach because no single R package can make every
-Quarto figure, table, and image respond perfectly to a browser-side theme
-switch.
+If your `.qmd` is in a subfolder (e.g. `reports/my-report.qmd`), go up one level:
 
-- Quarto handles the native light/dark switch for HTML output.
-- CSS applies the One Dark palette to the document, code, callouts, markdown
-  tables, and `gt`/`gtsummary` tables.
-- `auto_dark_on()` configures transparent figure devices for HTML output.
-- A knitr plot hook creates a dark companion image named `*-auto-dark.*` for
-  each generated PNG/JPEG/WebP.
-- A `knitr::include_graphics()` adapter creates companion images for local
-  PNG/JPEG/WebP files inserted from disk.
-- A small browser script swaps light images for their dark companions when the
-  page switches to dark mode.
-- `flowchart::fc_draw()` gets a small adapter so its canvas is transparent by
-  default.
-- RevealJS gets a small icon-only switch and the same image companion logic.
+```r
+source("../_extensions/thomashusson29/auto-dark/auto-dark-setup.R")
+auto_dark_on()
+```
 
-The shared One Dark palette is:
+The rule: the path must reach `_extensions/` relative to the `.qmd` file's location.
 
-| Role | Color |
+### Installed from a local checkout
+
+When using `quarto add /path/to/local/repo`, Quarto installs the extension as
+`_extensions/auto-dark` (no owner prefix). Use:
+
+```r
+source("_extensions/auto-dark/auto-dark-setup.R")
+auto_dark_on()
+```
+
+---
+
+## How it works
+
+No single R package can make every Quarto figure, table, and image respond to a
+browser-side theme switch. This extension uses a hybrid approach:
+
+| Layer | Responsibility |
 |---|---|
-| Background | `#282c34` |
-| Soft background | `#2c313a` |
-| Panel | `#21252b` |
-| Border/grid | `#3e4451` |
-| Text | `#abb2bf` |
-| Strong text | `#e6edf3` |
-| Accents | `#61afef`, `#98c379`, `#e06c75`, `#c678dd` |
+| **Quarto** | Native light/dark switch in HTML header; reads OS preference via `respect-user-color-scheme` |
+| **Lua filter** | Injects a `prefers-color-scheme` CSS layer on first load (adapted from gadenbuie/quarto-auto-dark) |
+| **CSS** | One Dark palette for body, code, callouts, markdown tables, `gt`/`gtsummary` tables |
+| **R (`auto_dark_on()`)** | Sets `bg = "transparent"` on the graphics device; installs knitr plot hook |
+| **Plot hook** | Generates a `*-auto-dark.*` companion image for every rendered PNG/JPEG/WebP via `magick` |
+| **include_graphics adapter** | Same companion generation for files inserted with `knitr::include_graphics()` |
+| **JavaScript** | On page load, probes for companion images and inserts hidden dark copies; CSS shows the right one |
+| **RevealJS** | `☾/☀` toggle button; early theme-class injection to prevent flash-of-wrong-theme |
 
-## R Packages
+### One Dark palette
+
+| Role | CSS variable | Color |
+|---|---|---|
+| Background | `--auto-dark-bg` | `#282c34` |
+| Soft background | `--auto-dark-bg-soft` | `#2c313a` |
+| Panel (code blocks) | `--auto-dark-panel` | `#21252b` |
+| Border | `--auto-dark-border` | `#3e4451` |
+| Text | `--auto-dark-text` | `#abb2bf` |
+| Strong text | `--auto-dark-text-strong` | `#e6edf3` |
+| Blue (links) | `--auto-dark-link` | `#61afef` |
+| Green | `--auto-dark-green` | `#98c379` |
+| Red | `--auto-dark-red` | `#e06c75` |
+| Purple | `--auto-dark-accent` | `#c678dd` |
+
+Defined once in `_extensions/auto-dark/auto-dark.css`.
+
+---
+
+## R packages
 
 Required for the robust image workflow:
 
-- `knitr`
-- `magick`
+| Package | Why |
+|---|---|
+| `knitr` | Plot hook and include_graphics adapter |
+| `magick` | Dark companion image generation |
 
-Used by the examples:
+Without `magick`, the extension falls back to CSS filter inversion (less precise but
+functional). A warning is shown at render time.
 
-- `ggplot2`
-- `dplyr`
-- `gt`
-- `gtsummary`
-- `flowchart`
-- `forestplot`
-- `rpart`
-- `rpart.plot`
-- `pROC`
+Used by the examples (not required by the extension itself):
+
+`ggplot2`, `dplyr`, `gt`, `gtsummary`, `flowchart`, `forestplot`, `rpart`,
+`rpart.plot`, `pROC`
 
 Optional:
 
-- `thematic`, only when calling `auto_dark_on(thematic = TRUE)`.
+- `thematic` — only when calling `auto_dark_on(thematic = TRUE)`
 
-`gt` and `gtsummary` are intentionally styled with CSS, not `thematic`.
+---
 
 ## API
 
 ```r
 auto_dark_on(
-  palette = "onedark",
-  mode = "robust",
-  transparent_figures = TRUE,
-  generate_dark_images = TRUE,
-  include_graphics = TRUE,
-  flowchart = TRUE,
-  thematic = FALSE,
-  quiet = FALSE
+  palette             = "onedark",  # Only "onedark" is currently supported
+  mode                = "robust",   # "robust" = companion images; "filter" = CSS only
+  transparent_figures = TRUE,       # Set bg = "transparent" on graphics device
+  generate_dark_images = TRUE,      # Create *-auto-dark.* companion images via magick
+  include_graphics    = TRUE,       # Hook knitr::include_graphics() too
+  flowchart           = TRUE,       # Patch flowchart::fc_draw() canvas_bg
+  thematic            = FALSE,      # Call thematic::thematic_on() with One Dark palette
+  quiet               = FALSE       # Suppress warnings about missing packages
 )
 ```
 
-Use `.auto-dark-no-filter` on an image or chunk output to opt out of fallback
-CSS filtering for a specific output.
+To opt a specific chunk out of CSS filtering:
+
+```r
+#| class.output: auto-dark-no-filter
+```
+
+---
 
 ## Limits
 
-- This extension targets HTML and RevealJS output. PDF is unchanged.
-- Static plots and local image files are supported through companion images.
-- Interactive widgets such as `plotly`, `htmlwidgets`, or custom JavaScript
-  widgets are not re-rendered as true dark widgets. They may need their own
-  package-specific theme options.
-- SVGs can be affected by fallback CSS filters, but the robust companion-image
-  path is for PNG/JPEG/WebP.
-- The browser switch does not re-run R code. Dark images are generated at render
-  time.
+- **PDF**: unchanged.
+- **Interactive widgets** (`plotly`, `htmlwidgets`): not re-themed. Use their own dark
+  theme options.
+- **SVGs**: affected by CSS fallback filter only; not by the companion-image workflow.
+- **Re-run**: the browser switch does not re-run R code. Dark images are generated at
+  render time.
+- **`file://` protocol**: OS dark mode detection requires `http://` or `https://`.
+  Open files via `quarto preview` or a static server for local testing.
+
+---
 
 ## Examples
 
-The examples are also published on GitHub Pages:
+The examples are published on GitHub Pages:
 
 - <https://thomashusson29.github.io/quarto_auto_dark_theme/>
 
-Render the HTML example:
-
-```bash
-quarto render template.qmd --to auto-dark-html
-```
-
-Render the RevealJS example:
-
-```bash
-quarto render examples/revealjs.qmd --to auto-dark-clean-revealjs
-```
-
-## Development Checks
+Render locally:
 
 ```bash
 quarto render template.qmd --to auto-dark-html
 quarto render examples/revealjs.qmd --to auto-dark-clean-revealjs
 ```
 
-Then open the generated pages and verify that:
+---
 
-- the light/dark switch works;
-- the background is One Dark, not black;
-- `gt`/`gtsummary` tables are readable;
-- generated figures use `*-auto-dark.*` companions in dark mode;
-- captions are not duplicated.
+## Development
+
+Run the automated test suite:
+
+```bash
+bash tests/run-tests.sh
+```
+
+Then open `tests/test-html.html` (via `quarto preview`, not `file://`) and follow the
+visual checklist in [TESTING.md](TESTING.md).
+
+See [REFACTOR_AUDIT.md](REFACTOR_AUDIT.md) for architecture notes.

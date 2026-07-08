@@ -1,0 +1,187 @@
+---
+title: "Auto Dark — RevealJS Test Slides"
+subtitle: "Visual checklist covering all required output types for RevealJS"
+format:
+  auto-dark-clean-revealjs:
+    slide-number: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+auto_dark_setup <- c(
+  "../../_extensions/thomashusson29/auto-dark/auto-dark-setup.R",
+  "../../_extensions/auto-dark/auto-dark-setup.R",
+  "../_extensions/auto-dark/auto-dark-setup.R"
+)
+auto_dark_setup <- auto_dark_setup[file.exists(auto_dark_setup)]
+if (!length(auto_dark_setup)) {
+  stop("Cannot find auto-dark-setup.R. Adjust the path for your project layout.")
+}
+source(auto_dark_setup[[1]])
+auto_dark_on()
+
+library(ggplot2)
+library(gt)
+if (requireNamespace("gtsummary", quietly = TRUE)) library(gtsummary)
+```
+
+## Test 1 — ggplot2 {.center}
+
+```{r}
+#| label: fig-ggplot2
+#| fig-width: 10
+#| fig-height: 5
+#| out-width: "90%"
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 3, alpha = 0.9) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.8) +
+  labs(x = "Weight", y = "MPG", colour = "Cyl") +
+  theme_minimal(base_size = 14)
+```
+
+*Expected: transparent background; One Dark slide bg visible behind plot.*
+
+---
+
+## Test 2 — Base R plot
+
+```{r}
+#| label: fig-base-r
+#| fig-width: 8
+#| fig-height: 4.5
+#| out-width: "80%"
+plot(
+  mtcars$wt, mtcars$mpg,
+  pch = 19, col = "#2A6F97",
+  xlab = "Weight", ylab = "MPG",
+  main = "Base R — mtcars"
+)
+abline(lm(mpg ~ wt, data = mtcars), col = "#e06c75", lwd = 2)
+```
+
+---
+
+## Test 3 — Transparent background
+
+```{r}
+#| label: fig-transparent
+#| fig-width: 8
+#| fig-height: 4
+#| out-width: "80%"
+op <- par(bg = "transparent", mar = c(4, 4, 2, 1))
+curve(sin(x), from = -pi, to = 2 * pi,
+      col = "#61afef", lwd = 2,
+      xlab = "x", ylab = "sin(x)",
+      main = "Transparent background test")
+abline(h = 0, col = "#3e4451", lty = 2)
+par(op)
+```
+
+*Slide background must be visible behind the axes.*
+
+---
+
+## Test 4 — gt table
+
+```{r}
+#| label: tbl-gt
+head(mtcars[, c("mpg", "cyl", "wt", "am")], 6) |>
+  gt() |>
+  tab_header(title = "mtcars sample")
+```
+
+---
+
+## Test 5 — gtsummary
+
+```{r}
+#| label: tbl-gtsummary
+if (requireNamespace("gtsummary", quietly = TRUE)) {
+  gtsummary::trial |>
+    dplyr::select(age, grade, trt) |>
+    gtsummary::tbl_summary(by = trt, missing = "no") |>
+    gtsummary::add_p() |>
+    gtsummary::as_gt()
+} else {
+  cat("gtsummary not installed — skipped.")
+}
+```
+
+---
+
+## Test 6 — Local image via include_graphics()
+
+```{r}
+#| label: make-local-png
+#| include: false
+dir.create("generated", recursive = TRUE, showWarnings = FALSE)
+local_img <- "generated/test-revealjs-image.png"
+
+png(local_img, width = 700, height = 300, res = 100, bg = "white")
+par(mar = c(4, 4, 2, 1))
+plot(pressure, type = "b", pch = 19, col = "#2A6F97",
+     xlab = "Temperature", ylab = "Pressure",
+     main = "Local PNG — include_graphics() in RevealJS")
+grid(col = "#dddddd")
+dev.off()
+```
+
+```{r}
+#| label: fig-include-graphics
+#| out-width: "70%"
+knitr::include_graphics(local_img)
+```
+
+*Dark companion must be generated and shown in dark mode.*
+
+---
+
+## Test 7 — Code block
+
+```{r}
+#| echo: true
+# Code blocks should have One Dark panel background.
+x <- 1:10
+cumsum(x)
+```
+
+---
+
+## Test 8 — Callout
+
+::: {.callout-note}
+## Callout note in RevealJS
+
+In dark mode: One Dark panel background, visible border, legible text.
+:::
+
+---
+
+## Test 9 — Markdown table
+
+| Element          | Dark mode expectation                |
+|------------------|--------------------------------------|
+| Slide background | `#282c34`                            |
+| Plot background  | Transparent (slide bg visible)       |
+| gt tables        | Dark bg, light text                  |
+| Code blocks      | One Dark panel bg                    |
+| ☾/☀ button       | Top-right; persists across reloads   |
+
+---
+
+## Test 10 — RevealJS presentation (this document)
+
+The ☾/☀ button in the top-right corner should:
+
+- Toggle between dark and light mode
+- Persist the choice in `localStorage`
+- Start in the correct mode on reload (OS preference or last choice)
+
+> Use your browser developer tools to confirm `html.auto-dark-theme-dark` is
+> present in dark mode.

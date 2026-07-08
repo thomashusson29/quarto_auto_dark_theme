@@ -1,29 +1,42 @@
 title: Auto Dark
 author: Thomas Husson
-version: 0.1.0
+version: 0.2.0
 quarto-required: ">=1.7.0"
+
+# The auto-dark-clean extension is a thin wrapper around this extension.
+# It re-uses CSS and JS files via relative paths (../auto-dark/…).
+# Both extensions must be installed together for auto-dark-clean to work.
+
 contributes:
+  # auto-dark.lua adds OS-level prefers-color-scheme detection for HTML output.
+  # Adapted from gadenbuie/quarto-auto-dark (MIT): https://github.com/gadenbuie/quarto-auto-dark
+  filters:
+    - auto-dark.lua
+
   formats:
     html:
       theme:
         light: cosmo
         dark: darkly
+      # respect-user-color-scheme reads prefers-color-scheme at page load and
+      # sets body.quarto-dark / body.quarto-light, which our CSS scopes to.
+      # The Lua filter adds a CSS media-query layer on top, but this option
+      # is the one that actually triggers the class-based One Dark styles.
       respect-user-color-scheme: true
       css:
         - auto-dark.css
-        - auto-dark-palette.css
         - auto-dark-plot-filter.css
       include-after-body:
         - text: |
             <script src="auto-dark-renderings.js"></script>
       format-resources:
         - auto-dark-renderings.js
+
     revealjs:
       theme: default
       css:
         - auto-dark.css
         - auto-dark-reveal.css
-        - auto-dark-palette.css
         - auto-dark-plot-filter.css
         - auto-dark-gt-reveal.css
         - auto-dark-switch.css

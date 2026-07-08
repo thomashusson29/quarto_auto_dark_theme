@@ -1,3 +1,47 @@
+/* ── Figure captions ─────────────────────────────────────────────────────── */
+/*
+ * RevealJS does not propagate --r-main-color to p.caption or figcaption
+ * reliably, so we set caption colours explicitly for both modes.
+ *
+ * Two caption structures exist in Quarto RevealJS output:
+ *   <p class="caption">          — simple r-stretch figures
+ *   <figcaption class="quarto-float-caption-bottom ..."> — quarto float figures
+ */
+
+html.auto-dark-theme-dark .reveal p.caption,
+html.auto-dark-theme-dark .reveal figcaption,
+html.auto-dark-theme-dark .reveal .quarto-float-caption,
+html.auto-dark-theme-dark .reveal .figure-caption,
+body.auto-dark-theme-dark .reveal p.caption,
+body.auto-dark-theme-dark .reveal figcaption,
+body.auto-dark-theme-dark .reveal .quarto-float-caption,
+body.auto-dark-theme-dark .reveal .figure-caption,
+body.quarto-dark .reveal p.caption,
+body.quarto-dark .reveal figcaption,
+body.quarto-dark .reveal .quarto-float-caption,
+body.quarto-dark .reveal .figure-caption {
+  color: var(--auto-dark-text-muted) !important; /* #8b949e — readable, visually secondary */
+  font-size: 0.72em;
+}
+
+html.auto-dark-theme-light .reveal p.caption,
+html.auto-dark-theme-light .reveal figcaption,
+html.auto-dark-theme-light .reveal .quarto-float-caption,
+html.auto-dark-theme-light .reveal .figure-caption,
+body.auto-dark-theme-light .reveal p.caption,
+body.auto-dark-theme-light .reveal figcaption,
+body.auto-dark-theme-light .reveal .quarto-float-caption,
+body.auto-dark-theme-light .reveal .figure-caption,
+body.quarto-light .reveal p.caption,
+body.quarto-light .reveal figcaption,
+body.quarto-light .reveal .quarto-float-caption,
+body.quarto-light .reveal .figure-caption {
+  color: #57606a !important; /* dark grey — readable on white slide background */
+  font-size: 0.72em;
+}
+
+/* ── Background colours ──────────────────────────────────────────────────── */
+
 html.auto-dark-theme-dark,
 body.auto-dark-theme-dark,
 body.quarto-dark {

@@ -1,0 +1,241 @@
+---
+title: "Auto Dark — HTML Test Document"
+subtitle: "Visual checklist covering all 10 required output types"
+format:
+  auto-dark-html:
+    toc: true
+    toc-depth: 2
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# Source the extension entry point.
+# Supports both GitHub install (thomashusson29/) and local checkout (auto-dark/).
+auto_dark_setup <- c(
+  "../_extensions/thomashusson29/auto-dark/auto-dark-setup.R",
+  "../_extensions/auto-dark/auto-dark-setup.R"
+)
+auto_dark_setup <- auto_dark_setup[file.exists(auto_dark_setup)]
+if (!length(auto_dark_setup)) {
+  stop(
+    "Cannot find auto-dark-setup.R. ",
+    "Run `quarto add thomashusson29/quarto_auto_dark_theme` first, ",
+    "or set the path manually."
+  )
+}
+source(auto_dark_setup[[1]])
+auto_dark_on()
+
+library(ggplot2)
+library(gt)
+if (requireNamespace("gtsummary", quietly = TRUE)) library(gtsummary)
+```
+
+---
+
+## Test 1 — ggplot2 plot
+
+*Expected: transparent plot background; One Dark page colour visible behind panel.*
+
+```{r}
+#| label: fig-ggplot2
+#| fig-width: 8
+#| fig-height: 4.5
+#| fig-cap: "ggplot2 scatter plot with theme_minimal(). Background must be transparent."
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 3, alpha = 0.9) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.8) +
+  labs(
+    x      = "Weight (1000 lbs)",
+    y      = "Miles per gallon",
+    colour = "Cylinders"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+---
+
+## Test 2 — Base R plot
+
+*Expected: transparent background; white plot elements inverted in dark companion.*
+
+```{r}
+#| label: fig-base-r
+#| fig-width: 6
+#| fig-height: 4
+#| fig-cap: "Base R plot. Axis, labels, and data points should be legible in both modes."
+plot(
+  mtcars$wt, mtcars$mpg,
+  pch  = 19,
+  col  = "#2A6F97",
+  xlab = "Weight",
+  ylab = "Miles per gallon",
+  main = "Base R — mtcars"
+)
+abline(lm(mpg ~ wt, data = mtcars), col = "#e06c75", lwd = 2)
+```
+
+---
+
+## Test 3 — Transparent background over One Dark page
+
+*Expected: the plot panel area shows the page background (`#282c34`) in dark mode,
+not white or grey.*
+
+```{r}
+#| label: fig-transparent
+#| fig-width: 6
+#| fig-height: 3.5
+#| fig-cap: "Transparent device background test. Page colour must show behind the axes."
+op <- par(bg = "transparent", mar = c(4, 4, 2, 1))
+curve(
+  sin(x), from = -pi, to = 2 * pi,
+  col  = "#61afef",
+  lwd  = 2,
+  xlab = "x",
+  ylab = "sin(x)",
+  main = "Transparent background test"
+)
+abline(h = 0, col = "#3e4451", lty = 2)
+par(op)
+```
+
+---
+
+## Test 4 — gt table
+
+*Expected: table readable in both modes; dark background, light text in dark mode.*
+
+```{r}
+#| label: tbl-gt
+#| tbl-cap: "A simple gt table using mtcars."
+head(mtcars[, c("mpg", "cyl", "wt", "am")], 8) |>
+  gt() |>
+  tab_header(title = "mtcars sample", subtitle = "First 8 rows")
+```
+
+---
+
+## Test 5 — gtsummary table
+
+*Expected: gtsummary table rendered as gt; same dark styling as Test 4.*
+
+```{r}
+#| label: tbl-gtsummary
+#| tbl-cap: "A gtsummary table. Requires the gtsummary package."
+if (requireNamespace("gtsummary", quietly = TRUE)) {
+  gtsummary::trial |>
+    dplyr::select(age, grade, trt) |>
+    gtsummary::tbl_summary(by = trt, missing = "no") |>
+    gtsummary::add_p() |>
+    gtsummary::as_gt()
+} else {
+  cat("gtsummary not installed — skipped.")
+}
+```
+
+---
+
+## Test 6 — Local image via include_graphics
+
+*Expected: a dark companion (`*-auto-dark.png`) is generated next to the file; it is
+displayed in dark mode.*
+
+```{r}
+#| label: make-local-png
+#| include: false
+dir.create("generated", recursive = TRUE, showWarnings = FALSE)
+local_img <- "generated/test-local-image.png"
+
+png(local_img, width = 700, height = 300, res = 100, bg = "white")
+par(mar = c(4, 4, 2, 1))
+plot(pressure, type = "b", pch = 19, col = "#2A6F97",
+     xlab = "Temperature", ylab = "Pressure",
+     main = "Local PNG — include_graphics() test")
+grid(col = "#dddddd")
+dev.off()
+```
+
+```{r}
+#| label: fig-include-graphics
+#| out-width: "65%"
+#| fig-cap: "Local PNG inserted with knitr::include_graphics(). Dark companion generated automatically."
+knitr::include_graphics(local_img)
+```
+
+---
+
+## Test 7 — Code block
+
+*Expected: panel background `#21252b`; text `#e6edf3`; no overflow or white background.*
+
+```{r}
+#| label: code-block-test
+#| echo: true
+# This block should render with One Dark code block styling in dark mode.
+x <- seq(0, 2 * pi, length.out = 100)
+y <- sin(x) * exp(-x / 5)
+head(round(data.frame(x = x, y = y), 3), 5)
+```
+
+---
+
+## Test 8 — Callout
+
+*Expected: callout background `#21252b`; border `#3e4451`; text legible.*
+
+::: {.callout-note}
+## Callout note
+
+This is a Quarto callout. In dark mode it should have the One Dark panel background
+(`#21252b`) and a visible border. Text should be `#abb2bf` or `#e6edf3`.
+:::
+
+::: {.callout-warning}
+## Callout warning
+
+A warning callout. The coloured left border should still be visible in dark mode.
+:::
+
+::: {.callout-tip}
+## Callout tip
+
+A tip callout. Verify that the icon and text are legible.
+:::
+
+---
+
+## Test 9 — Markdown table
+
+*Expected: table border `#3e4451`; text `#abb2bf`; header distinguishable.*
+
+| Test item             | Expected in dark mode         | Status |
+|-----------------------|-------------------------------|--------|
+| Page background       | `#282c34`                     | ☐      |
+| Plot background       | Transparent                   | ☐      |
+| ggplot2               | Dark companion shown          | ☐      |
+| base R                | Dark companion shown          | ☐      |
+| gt table              | Dark bg, light text           | ☐      |
+| gtsummary table       | Same as gt                    | ☐      |
+| include_graphics      | Dark companion shown          | ☐      |
+| Code block            | One Dark panel bg             | ☐      |
+| Callout               | One Dark panel bg + border    | ☐      |
+| Light/dark toggle     | Works; persists in reload     | ☐      |
+| OS dark mode          | Page starts dark automatically| ☐      |
+
+---
+
+## Test 10 — HTML document (this document itself)
+
+*The HTML document format is `auto-dark-html`. The page background must be
+`#282c34` in dark mode, and the light/dark switch in the Quarto header should
+toggle correctly.*
+
+> Verify with the switch in the top-right corner (or set your OS to dark mode and
+> reload the page).

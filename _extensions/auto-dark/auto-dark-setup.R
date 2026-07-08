@@ -1,15 +1,23 @@
+# auto-dark-setup.R
+#
+# Entry point for the auto-dark Quarto extension.
+# Source this file once in a hidden setup chunk, then call auto_dark_on().
+#
+# Usage:
+#   source("_extensions/auto-dark/auto-dark-setup.R")
+#   auto_dark_on()
+#
+# See README.md for full path variants (GitHub install vs. local checkout).
+
+
+# ── 1. Utility helpers ────────────────────────────────────────────────────────
+
 `%||%` <- function(x, y) {
   if (is.null(x) || length(x) == 0 || all(is.na(x))) y else x
 }
 
-auto_dark_state <- new.env(parent = emptyenv())
-auto_dark_state$active <- FALSE
-auto_dark_state$plot_hook_installed <- FALSE
-auto_dark_state$plot_hook_original <- NULL
-auto_dark_state$include_graphics_installed <- FALSE
-auto_dark_state$include_graphics_original <- NULL
-auto_dark_state$flowchart_installed <- FALSE
-auto_dark_state$flowchart_original <- NULL
+
+# ── 2. One Dark palette ───────────────────────────────────────────────────────
 
 auto_dark_palette <- function(name = "onedark") {
   if (!identical(name, "onedark")) {
@@ -17,24 +25,50 @@ auto_dark_palette <- function(name = "onedark") {
   }
 
   list(
-    name = "onedark",
-    bg = "#282c34",
-    bg_soft = "#2c313a",
-    panel = "#21252b",
-    border = "#3e4451",
-    text = "#abb2bf",
+    name        = "onedark",
+    bg          = "#282c34",
+    bg_soft     = "#2c313a",
+    panel       = "#21252b",
+    border      = "#3e4451",
+    text        = "#abb2bf",
     text_strong = "#e6edf3",
-    text_muted = "#8b949e",
-    blue = "#61afef",
-    green = "#98c379",
-    red = "#e06c75",
-    purple = "#c678dd"
+    text_muted  = "#8b949e",
+    blue        = "#61afef",
+    green       = "#98c379",
+    red         = "#e06c75",
+    purple      = "#c678dd"
   )
 }
 
+
+# ── 3. Extension state ────────────────────────────────────────────────────────
+#
+# A small environment used to track installation status of each hook so that
+# repeated calls to auto_dark_on() do not double-install hooks.
+
+auto_dark_state <- new.env(parent = emptyenv())
+auto_dark_state$active                    <- FALSE
+auto_dark_state$plot_hook_installed       <- FALSE
+auto_dark_state$plot_hook_original        <- NULL
+auto_dark_state$include_graphics_installed <- FALSE
+auto_dark_state$include_graphics_original  <- NULL
+auto_dark_state$flowchart_installed       <- FALSE
+auto_dark_state$flowchart_original        <- NULL
+
+
+# ── 4. Context helpers ────────────────────────────────────────────────────────
+
+# Returns TRUE when knitr is knitting to HTML output.
 auto_dark_html_output <- function() {
   requireNamespace("knitr", quietly = TRUE) && isTRUE(knitr::is_html_output())
 }
+
+
+# ── 5. Graphics device – transparent backgrounds ──────────────────────────────
+#
+# Sets dev.args$bg = "transparent" so that plot panel and device backgrounds
+# are transparent PNG/JPEG/WebP, allowing the One Dark page background
+# (#282c34) to show through behind rendered figures.
 
 auto_dark_configure_transparent_figures <- function() {
   if (!auto_dark_html_output()) {
@@ -48,12 +82,26 @@ auto_dark_configure_transparent_figures <- function() {
   auto_dark_dev_args$bg <- "transparent"
 
   knitr::opts_chunk$set(
-    fig.bg = "transparent",
+    fig.bg  = "transparent",
     dev.args = auto_dark_dev_args
   )
 
   invisible(TRUE)
 }
+
+
+# ── 6. Companion image generation (magick) ────────────────────────────────────
+#
+# For each rendered figure (PNG/JPEG/WebP), a dark companion image is produced
+# by: (1) making exact white transparent, (2) negating colours, (3) rotating
+# hue slightly. The companion is written to the same folder with the suffix
+# "-auto-dark" before the file extension, e.g. "fig-1.png" → "fig-1-auto-dark.png".
+#
+# The browser-side script (auto-dark-renderings.js) probes for these companions
+# and inserts a hidden dark copy next to each figure; CSS shows the right one.
+#
+# Requires the `magick` package. Falls back to CSS filtering silently when magick
+# is absent (with a warning unless quiet = TRUE).
 
 auto_dark_companion_path <- function(path) {
   sub("(\\.[^.\\/]+)$", "-auto-dark\\1", path)
@@ -71,6 +119,8 @@ auto_dark_make_dark_image <- function(path, palette = auto_dark_palette()) {
   }
 
   dark_path <- auto_dark_companion_path(path)
+
+  # Skip if a fresh companion already exists.
   if (file.exists(dark_path) &&
       file.info(dark_path)$mtime >= file.info(path)$mtime) {
     return(invisible(dark_path))
@@ -78,8 +128,9 @@ auto_dark_make_dark_image <- function(path, palette = auto_dark_palette()) {
 
   image <- magick::image_read(path)
 
-  # Exact white is usually device/page background. Keep near-white plotted
-  # elements intact so clinical diagrams do not lose boxes or labels.
+  # Exact white is typically the device/page background. Making it transparent
+  # lets the One Dark page colour show through. A very small fuzz (0.5%) avoids
+  # erasing near-white clinical diagram elements (boxes, labels, backgrounds).
   image <- magick::image_transparent(image, color = "white", fuzz = 0.005)
   image <- magick::image_negate(image)
   image <- magick::image_modulate(image, hue = 200)
@@ -90,6 +141,8 @@ auto_dark_make_dark_image <- function(path, palette = auto_dark_palette()) {
   invisible(dark_path)
 }
 
+# Process a vector of image paths, skipping if the feature is disabled or if
+# the chunk has opted out via class.output = "auto-dark-no-filter".
 auto_dark_make_dark_images <- function(paths, options = knitr::opts_current$get()) {
   if (!isTRUE(getOption("auto_dark.generate_dark_images", TRUE)) ||
       !auto_dark_html_output()) {
@@ -105,6 +158,12 @@ auto_dark_make_dark_images <- function(paths, options = knitr::opts_current$get(
   lapply(paths, auto_dark_make_dark_image, palette = palette)
   invisible(NULL)
 }
+
+
+# ── 7. knitr plot hook ────────────────────────────────────────────────────────
+#
+# Wraps the default knitr plot hook so that every rendered figure triggers
+# dark companion image generation before the original hook inserts the <img>.
 
 auto_dark_install_plot_hook <- function() {
   if (!requireNamespace("knitr", quietly = TRUE) ||
@@ -123,6 +182,14 @@ auto_dark_install_plot_hook <- function() {
   invisible(TRUE)
 }
 
+
+# ── 8. knitr::include_graphics() adapter ─────────────────────────────────────
+#
+# knitr::include_graphics() returns a "knit_image_paths" object. This adapter
+# wraps its S3 knit_print method so that local image files also get a dark
+# companion generated at render time — without the user needing to call any
+# extra function.
+
 auto_dark_install_include_graphics_adapter <- function() {
   if (!requireNamespace("knitr", quietly = TRUE) ||
       isTRUE(auto_dark_state$include_graphics_installed)) {
@@ -132,7 +199,7 @@ auto_dark_install_include_graphics_adapter <- function() {
   original <- getS3method(
     "knit_print",
     "knit_image_paths",
-    envir = asNamespace("knitr"),
+    envir    = asNamespace("knitr"),
     optional = TRUE
   )
 
@@ -159,6 +226,13 @@ auto_dark_install_include_graphics_adapter <- function() {
   invisible(TRUE)
 }
 
+
+# ── 9. flowchart::fc_draw() adapter ──────────────────────────────────────────
+#
+# Patches flowchart::fc_draw() so that its canvas_bg argument defaults to
+# "transparent", allowing the One Dark page background to show through
+# flowchart diagrams without the user needing to set canvas_bg manually.
+
 auto_dark_install_flowchart_adapter <- function() {
   if (isTRUE(auto_dark_state$flowchart_installed) ||
       !requireNamespace("flowchart", quietly = TRUE)) {
@@ -168,7 +242,7 @@ auto_dark_install_flowchart_adapter <- function() {
   original <- getS3method(
     "fc_draw",
     "fc",
-    envir = asNamespace("flowchart"),
+    envir    = asNamespace("flowchart"),
     optional = TRUE
   )
   if (is.null(original)) {
@@ -192,14 +266,39 @@ auto_dark_install_flowchart_adapter <- function() {
   invisible(TRUE)
 }
 
-auto_dark_on <- function(palette = "onedark",
-                         mode = "robust",
+
+# ── 10. Public API: auto_dark_on() / auto_dark_off() ─────────────────────────
+
+#' Enable the One Dark theme for the current knitr session.
+#'
+#' Call once in a hidden setup chunk after sourcing this file.
+#' See README.md for the full list of arguments and their defaults.
+#'
+#' @param palette           Palette name. Only "onedark" is currently supported.
+#' @param mode              "robust" (companion images via magick) or "filter"
+#'                          (CSS-only fallback, no magick required).
+#' @param transparent_figures  Set device background to transparent so the page
+#'                          background colour is visible behind plots.
+#' @param generate_dark_images  Create *-auto-dark.* companion images for each
+#'                          rendered figure.
+#' @param include_graphics  Hook knitr::include_graphics() to also generate
+#'                          companions for local image files.
+#' @param flowchart         Patch flowchart::fc_draw() canvas_bg default to
+#'                          "transparent".
+#' @param thematic          Call thematic::thematic_on() with the One Dark palette.
+#'                          Requires the `thematic` package.
+#' @param quiet             Suppress warnings about missing optional packages.
+#'
+#' @return Invisibly returns the active palette list.
+auto_dark_on <- function(palette             = "onedark",
+                         mode                = "robust",
                          transparent_figures = TRUE,
                          generate_dark_images = TRUE,
-                         include_graphics = TRUE,
-                         flowchart = TRUE,
-                         thematic = FALSE,
-                         quiet = FALSE) {
+                         include_graphics    = TRUE,
+                         flowchart           = TRUE,
+                         thematic            = FALSE,
+                         quiet               = FALSE) {
+
   if (!mode %in% c("robust", "filter")) {
     stop("mode must be 'robust' or 'filter'.", call. = FALSE)
   }
@@ -207,10 +306,10 @@ auto_dark_on <- function(palette = "onedark",
   pal <- auto_dark_palette(palette)
 
   options(
-    auto_dark.active = TRUE,
-    auto_dark.mode = mode,
-    auto_dark.palette = pal,
-    auto_dark.transparent_figures = transparent_figures,
+    auto_dark.active               = TRUE,
+    auto_dark.mode                 = mode,
+    auto_dark.palette              = pal,
+    auto_dark.transparent_figures  = transparent_figures,
     auto_dark.generate_dark_images = generate_dark_images
   )
 
@@ -234,23 +333,33 @@ auto_dark_on <- function(palette = "onedark",
     if (requireNamespace("thematic", quietly = TRUE)) {
       thematic::thematic_on(bg = pal$bg, fg = pal$text, accent = pal$blue)
     } else if (!isTRUE(quiet)) {
-      warning("Package 'thematic' is not installed; R plots will use their default theme.")
+      warning(
+        "Package 'thematic' is not installed; R plots will use their default theme.",
+        call. = FALSE
+      )
     }
   }
 
   if (!requireNamespace("magick", quietly = TRUE) &&
       isTRUE(generate_dark_images) &&
       !isTRUE(quiet)) {
-    warning("Package 'magick' is not installed; dark plot images will fall back to CSS filtering only.")
+    warning(
+      "Package 'magick' is not installed; dark plot images will fall back to CSS filtering only.",
+      call. = FALSE
+    )
   }
 
   auto_dark_state$active <- TRUE
   invisible(pal)
 }
 
+
+#' Disable auto dark mode for the current knitr session.
+#'
+#' Stops companion image generation. Does not remove installed hooks.
 auto_dark_off <- function() {
   options(
-    auto_dark.active = FALSE,
+    auto_dark.active               = FALSE,
     auto_dark.generate_dark_images = FALSE
   )
   auto_dark_state$active <- FALSE
