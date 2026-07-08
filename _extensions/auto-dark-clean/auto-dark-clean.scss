@@ -1,47 +1,30 @@
 /*-- scss:defaults --*/
 
-$jet: #131516;
-$accent: #107895;
-$accent2: #9a2515;
-$font-family-sans-serif: "Roboto", "Helvetica Neue", Arial, sans-serif !default;
-$presentation-heading-font: "Roboto", "Helvetica Neue", Arial, sans-serif !default;
-$presentation-heading-color: $jet !default;
-$presentation-heading-font-weight: lighter;
+/*
+ * auto-dark-clean.scss
+ *
+ * Light-mode theme for the auto-dark-clean RevealJS format.
+ * This file defines ONLY typographic defaults for the light theme.
+ * ALL colour overrides for dark mode live in auto-dark-reveal.css,
+ * scoped strictly to .auto-dark-theme-dark — so the light theme
+ * is the unmodified Quarto default theme.
+ *
+ * Font: Roboto (Google Fonts)
+ */
+
+$font-family-sans-serif:     "Roboto", "Helvetica Neue", Arial, sans-serif !default;
+$presentation-heading-font:  "Roboto", "Helvetica Neue", Arial, sans-serif !default;
 $presentation-font-size-root: 32px;
-$body-color: $jet !default;
-$link-color: $accent !default;
-$selection-bg: #26351c !default;
 
 /*-- scss:rules --*/
 
 @import url("https://fonts.googleapis.com/css?family=Roboto:200,300,400&display=swap");
 
+/* Typography weight — light mode only */
 .reveal p,
 .reveal ul,
 .reveal ol {
   font-weight: lighter;
-}
-
-#title-slide {
-  text-align: left;
-}
-
-#title-slide .title {
-  color: $body-color;
-  font-size: 1.4em;
-  font-weight: lighter;
-}
-
-#title-slide .subtitle {
-  color: $accent;
-  font-style: italic;
-  margin-top: 0;
-  font-weight: lighter;
-}
-
-#title-slide .author,
-#title-slide .quarto-title-author-name {
-  color: $body-color;
 }
 
 .reveal h2 {
@@ -51,7 +34,6 @@ $selection-bg: #26351c !default;
 }
 
 .reveal h3 {
-  color: $accent;
   font-style: italic;
   font-weight: lighter;
   font-size: 0.95em;
@@ -60,7 +42,6 @@ $selection-bg: #26351c !default;
 }
 
 .reveal h4 {
-  color: $accent2;
   font-weight: normal;
   margin-top: 1.25em;
   margin-bottom: 0;
@@ -71,36 +52,30 @@ $selection-bg: #26351c !default;
   padding-left: 16px;
 }
 
-.reveal ul li::marker {
-  color: mix($accent, white, 70%);
+#title-slide {
+  text-align: left;
 }
 
-.reveal ol li::marker {
-  color: $accent;
+#title-slide .title {
+  font-size: 1.4em;
+  font-weight: lighter;
 }
 
-.reveal .slide-menu-button {
-  position: fixed;
-  top: 6px;
-  right: 0;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  pointer-events: none;
+#title-slide .subtitle {
+  font-style: italic;
+  margin-top: 0;
+  font-weight: lighter;
 }
 
-.reveal .slide-menu-button > * {
-  pointer-events: auto;
-}
-
+/* Slide number */
 .slide-number,
 .reveal.has-logo .slide-number {
   bottom: 6px !important;
-  right: 10px !important;
-  top: unset !important;
-  color: #777777 !important;
+  right: 10px  !important;
+  top: unset   !important;
 }
 
+/* Table */
 .reveal table {
   margin: auto;
   border-collapse: collapse;
@@ -124,4 +99,19 @@ $selection-bg: #26351c !default;
 
 .reveal table thead th {
   font-weight: bold;
+}
+
+/* Slide menu button */
+.reveal .slide-menu-button {
+  position: fixed;
+  top: 6px;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.reveal .slide-menu-button > * {
+  pointer-events: auto;
 }
