@@ -317,13 +317,11 @@ quarto render examples/revealjs.qmd --to auto-dark-clean-revealjs
 
 ## Development
 
-Run the automated test suite:
+Run the automated test suite (render + R syntax check + companion image check):
 
 ```bash
 bash tests/run-tests.sh
 ```
 
-Then open `tests/test-html.html` (via `quarto preview`, not `file://`) and follow the
-visual checklist in [TESTING.md](TESTING.md).
-
-See [REFACTOR_AUDIT.md](REFACTOR_AUDIT.md) for architecture notes.
+Then open `tests/test-html.html` and `tests/test-revealjs.html` via `quarto preview`
+(not `file://`) and verify visually.
