@@ -51,21 +51,6 @@ html.auto-dark-theme-dark a {
   color: var(--auto-dark-link);
 }
 
-/*
- * Explicit light-mode reset: when the user has manually toggled to light
- * (body.quarto-light), cancel any @media (prefers-color-scheme: dark) rules
- * that would otherwise still apply via lower-specificity selectors.
- */
-body.quarto-light {
-  color-scheme:     light;
-  background-color: revert;
-  color:            revert;
-}
-
-body.quarto-light a {
-  color: revert;
-}
-
 
 /* ── 3. gt / gtsummary tables ────────────────────────────────────────────── */
 
@@ -287,19 +272,31 @@ html.auto-dark-theme-dark .cell-output-display img {
  */
 
 @media (prefers-color-scheme: dark) {
+  /*
+   * Use body:not(.quarto-light) so these rules fire when:
+   *   (a) body starts as quarto-light (hardcoded) then JS switches to quarto-dark, OR
+   *   (b) no localStorage — Quarto JS will remove quarto-light and add quarto-dark.
+   *
+   * They do NOT fire when the user has explicitly chosen light mode
+   * (body.quarto-light stays after JS runs with localStorage="default").
+   *
+   * For table/code/figure elements, we scope to body:not(.quarto-light)
+   * as an ancestor to achieve the same effect without :has() everywhere.
+   */
+
   /* Body & links */
-  body {
+  body:not(.quarto-light) {
     color-scheme:     dark;
     background-color: var(--auto-dark-bg);
     color:            var(--auto-dark-text);
   }
 
-  a {
+  body:not(.quarto-light) a {
     color: var(--auto-dark-link);
   }
 
   /* gt / gtsummary tables */
-  .gt_table {
+  body:not(.quarto-light) .gt_table {
     color:               var(--auto-dark-text-strong) !important;
     background-color:    var(--auto-dark-bg) !important;
     border-top-color:    var(--auto-dark-border-strong) !important;
@@ -307,93 +304,93 @@ html.auto-dark-theme-dark .cell-output-display img {
     opacity:             1 !important;
   }
 
-  .gt_table * {
+  body:not(.quarto-light) .gt_table * {
     color:        var(--auto-dark-text-strong) !important;
     border-color: var(--auto-dark-border) !important;
     opacity:      1 !important;
   }
 
-  .gt_table th,
-  .gt_table td,
-  .gt_table .gt_row,
-  .gt_table .gt_stub,
-  .gt_table .gt_stubhead {
+  body:not(.quarto-light) .gt_table th,
+  body:not(.quarto-light) .gt_table td,
+  body:not(.quarto-light) .gt_table .gt_row,
+  body:not(.quarto-light) .gt_table .gt_stub,
+  body:not(.quarto-light) .gt_table .gt_stubhead {
     background-color: var(--auto-dark-bg) !important;
   }
 
-  .gt_table .gt_row,
-  .gt_table .gt_stub,
-  .gt_table .gt_stub * {
+  body:not(.quarto-light) .gt_table .gt_row,
+  body:not(.quarto-light) .gt_table .gt_stub,
+  body:not(.quarto-light) .gt_table .gt_stub * {
     color: var(--auto-dark-text-strong) !important;
   }
 
-  .gt_table .gt_col_headings,
-  .gt_table .gt_col_heading,
-  .gt_table .gt_heading,
-  .gt_table .gt_group_heading {
+  body:not(.quarto-light) .gt_table .gt_col_headings,
+  body:not(.quarto-light) .gt_table .gt_col_heading,
+  body:not(.quarto-light) .gt_table .gt_heading,
+  body:not(.quarto-light) .gt_table .gt_group_heading {
     color:            var(--auto-dark-text-strong) !important;
     background-color: var(--auto-dark-panel) !important;
     border-color:     var(--auto-dark-border-strong) !important;
   }
 
-  .gt_table .gt_table_body tr:nth-child(even) td,
-  .gt_table .gt_table_body tr:nth-child(even) th {
+  body:not(.quarto-light) .gt_table .gt_table_body tr:nth-child(even) td,
+  body:not(.quarto-light) .gt_table .gt_table_body tr:nth-child(even) th {
     background-color: var(--auto-dark-bg-soft) !important;
   }
 
-  .gt_table .gt_footnotes,
-  .gt_table .gt_source_notes,
-  .gt_table .gt_sourcenotes,
-  .gt_table .gt_footnote,
-  .gt_table .gt_source_note {
+  body:not(.quarto-light) .gt_table .gt_footnotes,
+  body:not(.quarto-light) .gt_table .gt_source_notes,
+  body:not(.quarto-light) .gt_table .gt_sourcenotes,
+  body:not(.quarto-light) .gt_table .gt_footnote,
+  body:not(.quarto-light) .gt_table .gt_source_note {
     color:            var(--auto-dark-text) !important;
     background-color: var(--auto-dark-bg) !important;
     border-color:     var(--auto-dark-border) !important;
   }
 
-  .gt_table .gt_footnote_marks,
-  .gt_table .gt_footnote_marks sup {
+  body:not(.quarto-light) .gt_table .gt_footnote_marks,
+  body:not(.quarto-light) .gt_table .gt_footnote_marks sup {
     color: var(--auto-dark-accent) !important;
   }
 
-  .gt_table a {
+  body:not(.quarto-light) .gt_table a {
     color: var(--auto-dark-link) !important;
   }
 
   /* Markdown tables */
-  table:not(.gt_table) {
+  body:not(.quarto-light) table:not(.gt_table) {
     color:        var(--auto-dark-text);
     border-color: var(--auto-dark-border);
   }
 
-  table:not(.gt_table) th,
-  table:not(.gt_table) td {
+  body:not(.quarto-light) table:not(.gt_table) th,
+  body:not(.quarto-light) table:not(.gt_table) td {
     border-color: var(--auto-dark-border);
   }
 
   /* Code blocks */
-  pre {
+  body:not(.quarto-light) pre {
     background-color: var(--auto-dark-panel);
     border-color:     var(--auto-dark-border);
   }
 
-  code {
+  body:not(.quarto-light) code {
     color: var(--auto-dark-text-strong);
   }
 
   /* Callouts */
-  .callout {
+  body:not(.quarto-light) .callout {
     background-color: var(--auto-dark-panel);
     border-color:     var(--auto-dark-border);
   }
 
   /* Visibility helpers */
-  .light-content          { display: none !important; }
-  .auto-dark-render-light { display: none !important; }
+  body:not(.quarto-light) .light-content          { display: none !important; }
+  body:not(.quarto-light) .auto-dark-render-light { display: none !important; }
 
   /* Figure backgrounds */
-  .quarto-figure img,
-  .cell-output-display img {
+  body:not(.quarto-light) .quarto-figure img,
+  body:not(.quarto-light) .cell-output-display img {
     background-color: transparent;
   }
 }
