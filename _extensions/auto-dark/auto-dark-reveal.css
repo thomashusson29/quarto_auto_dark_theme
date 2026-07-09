@@ -1,36 +1,46 @@
 /*
  * auto-dark-reveal.css
  *
- * Dark-mode styles for RevealJS presentations.
+ * One Dark Pro dark-mode overrides for auto-dark-clean-revealjs.
  *
- * IMPORTANT: This file scopes ALL colour overrides to the dark-mode class
- * (.auto-dark-theme-dark or body.quarto-dark) ONLY.
+ * DESIGN RULE: This file scopes ALL colour changes to
+ *   html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark
+ * ONLY. The light theme is the unmodified auto-dark-clean.scss (clean theme).
  *
- * The light theme is the Quarto default theme, completely unmodified.
- * Do NOT add light-mode colour overrides here.
+ * WHY !important: RevealJS themes are compiled from SCSS — colours like
+ *   #131516 and #107895 are baked into the CSS as literal values.
+ *   CSS custom-property overrides alone cannot reach them; !important on
+ *   the specific selectors is the correct and minimal fix.
+ *
+ * One Dark Pro palette used here:
+ *   Background   #282c34   Soft bg    #2c313a   Panel      #21252b
+ *   Border       #3e4451   Text       #abb2bf   Text strong #e6edf3
+ *   Text muted   #8b949e   Blue       #61afef   Green      #98c379
+ *   Yellow       #e5c07b   Red        #e06c75   Purple     #c678dd
  *
  * Sections:
- *   1. Figure captions (dark + light — needed because Reveal doesn't inherit colour)
- *   2. One Dark background (html/body, slide-background)
- *   3. One Dark — Reveal.js CSS variable overrides
- *   4. One Dark — slide content (text, headings, links)
- *   5. One Dark — title slide
- *   6. One Dark — blockquotes
- *   7. One Dark — markdown tables
- *   8. One Dark — code blocks / cell output
- *   9. One Dark — companion image visibility helpers
- *  10. ☾/☀ toggle button
+ *   1.  Figure captions (both modes — Reveal doesn't inherit colour)
+ *   2.  Background (html/body, slide-background)
+ *   3.  Reveal.js CSS variable overrides
+ *   4.  Body text and slides container
+ *   5.  Headings (h1–h6)
+ *   6.  Title slide
+ *   7.  Links
+ *   8.  List markers
+ *   9.  Blockquotes
+ *  10.  Markdown tables
+ *  11.  Code blocks / cell output
+ *  12.  Slide number
+ *  13.  Alerts / .fg / .bg utilities
+ *  14.  Companion image visibility helpers
+ *  15.  ☾/☀ toggle button
  */
 
 
 /* ── 1. Figure captions ──────────────────────────────────────────────────── */
 /*
- * Reveal.js does not propagate --r-main-color to p.caption or figcaption
- * reliably, so caption colours are set explicitly for BOTH modes here.
- *
- * Two caption structures exist in Quarto RevealJS output:
- *   <p class="caption">                      — simple r-stretch figures
- *   <figcaption class="quarto-float-caption"> — quarto float figures
+ * Reveal does not propagate --r-main-color to p.caption / figcaption, so
+ * both modes need explicit colour.
  */
 
 html.auto-dark-theme-dark .reveal p.caption,
@@ -45,11 +55,10 @@ body.quarto-dark .reveal p.caption,
 body.quarto-dark .reveal figcaption,
 body.quarto-dark .reveal .quarto-float-caption,
 body.quarto-dark .reveal .figure-caption {
-  color: var(--auto-dark-text-muted) !important;
+  color: #8b949e !important;
   font-size: 0.72em;
 }
 
-/* Light mode captions need explicit colour too (Reveal default can be white) */
 html.auto-dark-theme-light .reveal p.caption,
 html.auto-dark-theme-light .reveal figcaption,
 html.auto-dark-theme-light .reveal .quarto-float-caption,
@@ -63,7 +72,7 @@ body.auto-dark-theme-light .reveal .figure-caption {
 }
 
 
-/* ── 2. One Dark background ──────────────────────────────────────────────── */
+/* ── 2. Background ───────────────────────────────────────────────────────── */
 
 html.auto-dark-theme-dark,
 body.auto-dark-theme-dark,
@@ -81,132 +90,172 @@ body.quarto-dark .reveal .backgrounds {
 }
 
 
-/* ── 3. One Dark — Reveal.js CSS variable overrides ─────────────────────── */
+/* ── 3. Reveal.js CSS variable overrides ─────────────────────────────────── */
+/*
+ * These cover all elements that correctly use the --r-* variables.
+ * For elements with baked-in SCSS colours, see sections 4–13.
+ */
 
 html.auto-dark-theme-dark .reveal,
 body.auto-dark-theme-dark .reveal,
 body.quarto-dark .reveal {
-  --r-background-color:           var(--auto-dark-bg);
-  --r-main-color:                 var(--auto-dark-text);
-  --r-heading-color:              var(--auto-dark-text-strong);
-  --r-link-color:                 var(--auto-dark-link);
-  --r-link-color-hover:           var(--auto-dark-green);
-  --r-selection-background-color: var(--auto-dark-border);
-  --r-selection-color:            var(--auto-dark-text-strong);
+  --r-background-color:           #282c34;
+  --r-main-color:                 #abb2bf;
+  --r-heading-color:              #e6edf3;
+  --r-link-color:                 #61afef;
+  --r-link-color-hover:           #98c379;
+  --r-selection-background-color: #3e4451;
+  --r-selection-color:            #e6edf3;
 }
 
 
-/* ── 4. One Dark — slide content ─────────────────────────────────────────── */
+/* ── 4. Body text and slides container ───────────────────────────────────── */
+/*
+ * $body-color: #131516 is baked in → needs !important override.
+ */
 
+html.auto-dark-theme-dark .reveal,
 html.auto-dark-theme-dark .reveal .slides,
+body.auto-dark-theme-dark .reveal,
 body.auto-dark-theme-dark .reveal .slides,
+body.quarto-dark .reveal,
 body.quarto-dark .reveal .slides {
-  color: var(--auto-dark-text);
+  color: #abb2bf !important;
 }
+
+
+/* ── 5. Headings ─────────────────────────────────────────────────────────── */
+/*
+ * $presentation-heading-color: $jet (#131516) → baked in.
+ * h3: $accent (#107895), h4: $accent2 (#9a2515) → baked in.
+ */
 
 html.auto-dark-theme-dark .reveal h1,
 html.auto-dark-theme-dark .reveal h2,
-html.auto-dark-theme-dark .reveal h3,
-html.auto-dark-theme-dark .reveal h4,
 html.auto-dark-theme-dark .reveal h5,
 html.auto-dark-theme-dark .reveal h6,
 body.auto-dark-theme-dark .reveal h1,
 body.auto-dark-theme-dark .reveal h2,
-body.auto-dark-theme-dark .reveal h3,
-body.auto-dark-theme-dark .reveal h4,
 body.auto-dark-theme-dark .reveal h5,
 body.auto-dark-theme-dark .reveal h6,
 body.quarto-dark .reveal h1,
 body.quarto-dark .reveal h2,
-body.quarto-dark .reveal h3,
-body.quarto-dark .reveal h4,
 body.quarto-dark .reveal h5,
 body.quarto-dark .reveal h6 {
-  color: var(--auto-dark-text-strong);
+  color: #e6edf3 !important;
 }
 
-/* h3 and h4 get accent colours in One Dark */
+/* h3 → One Dark blue */
 html.auto-dark-theme-dark .reveal h3,
 body.auto-dark-theme-dark .reveal h3,
 body.quarto-dark .reveal h3 {
-  color: var(--auto-dark-link);   /* #61afef — blue */
+  color: #61afef !important;
 }
 
+/* h4 → One Dark yellow/gold (replaces the clean theme's red $accent2) */
 html.auto-dark-theme-dark .reveal h4,
 body.auto-dark-theme-dark .reveal h4,
 body.quarto-dark .reveal h4 {
-  color: var(--auto-dark-green);  /* #98c379 — green */
-}
-
-html.auto-dark-theme-dark .reveal a,
-body.auto-dark-theme-dark .reveal a,
-body.quarto-dark .reveal a {
-  color: var(--auto-dark-link);
-}
-
-html.auto-dark-theme-dark .reveal a:hover,
-body.auto-dark-theme-dark .reveal a:hover,
-body.quarto-dark .reveal a:hover {
-  color: var(--auto-dark-green);
-}
-
-html.auto-dark-theme-dark .reveal ul li::marker,
-body.auto-dark-theme-dark .reveal ul li::marker,
-body.quarto-dark .reveal ul li::marker {
-  color: var(--auto-dark-link);
-}
-
-html.auto-dark-theme-dark .reveal ol li::marker,
-body.auto-dark-theme-dark .reveal ol li::marker,
-body.quarto-dark .reveal ol li::marker {
-  color: var(--auto-dark-link);
+  color: #e5c07b !important;
 }
 
 
-/* ── 5. One Dark — title slide ───────────────────────────────────────────── */
+/* ── 6. Title slide ──────────────────────────────────────────────────────── */
+/*
+ * All colours in #title-slide are baked in via SCSS.
+ */
 
 html.auto-dark-theme-dark #title-slide .title,
-html.auto-dark-theme-dark #title-slide .author,
-html.auto-dark-theme-dark #title-slide .quarto-title-author-name,
 body.auto-dark-theme-dark #title-slide .title,
-body.auto-dark-theme-dark #title-slide .author,
-body.auto-dark-theme-dark #title-slide .quarto-title-author-name,
-body.quarto-dark #title-slide .title,
-body.quarto-dark #title-slide .author,
-body.quarto-dark #title-slide .quarto-title-author-name {
-  color: var(--auto-dark-text-strong) !important;
+body.quarto-dark #title-slide .title {
+  color: #e6edf3 !important;
 }
 
 html.auto-dark-theme-dark #title-slide .subtitle,
 body.auto-dark-theme-dark #title-slide .subtitle,
 body.quarto-dark #title-slide .subtitle {
-  color: var(--auto-dark-link) !important;
+  color: #61afef !important;  /* One Dark blue — replaces $accent #107895 */
 }
 
-html.auto-dark-theme-dark .reveal .quarto-title-block .quarto-title-authors,
-body.auto-dark-theme-dark .reveal .quarto-title-block .quarto-title-authors,
-body.quarto-dark .reveal .quarto-title-block .quarto-title-authors {
-  color: var(--auto-dark-text);
+html.auto-dark-theme-dark #title-slide .author,
+html.auto-dark-theme-dark #title-slide .quarto-title-author-name,
+html.auto-dark-theme-dark #title-slide .institute,
+html.auto-dark-theme-dark #title-slide .quarto-title-affiliation,
+html.auto-dark-theme-dark #title-slide .quarto-title-author-email,
+body.auto-dark-theme-dark #title-slide .author,
+body.auto-dark-theme-dark #title-slide .quarto-title-author-name,
+body.auto-dark-theme-dark #title-slide .institute,
+body.auto-dark-theme-dark #title-slide .quarto-title-affiliation,
+body.auto-dark-theme-dark #title-slide .quarto-title-author-email,
+body.quarto-dark #title-slide .author,
+body.quarto-dark #title-slide .quarto-title-author-name,
+body.quarto-dark #title-slide .institute,
+body.quarto-dark #title-slide .quarto-title-affiliation,
+body.quarto-dark #title-slide .quarto-title-author-email {
+  color: #abb2bf !important;
 }
 
 
-/* ── 6. One Dark — blockquotes ───────────────────────────────────────────── */
+/* ── 7. Links ────────────────────────────────────────────────────────────── */
+
+html.auto-dark-theme-dark .reveal a,
+body.auto-dark-theme-dark .reveal a,
+body.quarto-dark .reveal a {
+  color: #61afef !important;
+}
+
+html.auto-dark-theme-dark .reveal a:hover,
+body.auto-dark-theme-dark .reveal a:hover,
+body.quarto-dark .reveal a:hover {
+  color: #98c379 !important;
+}
+
+
+/* ── 8. List markers ─────────────────────────────────────────────────────── */
+/*
+ * mix($accent, white, 70%) = #57a4b8 (baked in) → override with One Dark blue.
+ * Nested ul arrow (::before) also needs override.
+ */
+
+html.auto-dark-theme-dark .reveal ul li::marker,
+body.auto-dark-theme-dark .reveal ul li::marker,
+body.quarto-dark .reveal ul li::marker {
+  color: #61afef !important;
+}
+
+html.auto-dark-theme-dark .reveal ul ul li:before,
+body.auto-dark-theme-dark .reveal ul ul li:before,
+body.quarto-dark .reveal ul ul li:before {
+  color: #98c379 !important;  /* nested → green for visual depth */
+}
+
+html.auto-dark-theme-dark .reveal ol li::marker,
+body.auto-dark-theme-dark .reveal ol li::marker,
+body.quarto-dark .reveal ol li::marker {
+  color: #61afef !important;
+}
+
+
+/* ── 9. Blockquotes ──────────────────────────────────────────────────────── */
 
 html.auto-dark-theme-dark .reveal blockquote,
 body.auto-dark-theme-dark .reveal blockquote,
 body.quarto-dark .reveal blockquote {
-  background-color: var(--auto-dark-panel);
-  border-left: 4px solid var(--auto-dark-link);
-  color: var(--auto-dark-text);
+  background-color: #21252b !important;
+  border-left: 4px solid #61afef !important;
+  color: #abb2bf !important;
 }
 
 
-/* ── 7. One Dark — markdown tables ──────────────────────────────────────── */
+/* ── 10. Markdown tables ─────────────────────────────────────────────────── */
+/*
+ * border-bottom: 2px solid #D3D3D3 is baked in.
+ */
 
 html.auto-dark-theme-dark .reveal table:not(.gt_table),
 body.auto-dark-theme-dark .reveal table:not(.gt_table),
 body.quarto-dark .reveal table:not(.gt_table) {
-  color: var(--auto-dark-text);
+  color: #abb2bf !important;
 }
 
 html.auto-dark-theme-dark .reveal table:not(.gt_table) thead th,
@@ -218,13 +267,17 @@ body.auto-dark-theme-dark .reveal .slides table:not(.gt_table),
 body.quarto-dark .reveal table:not(.gt_table) thead th,
 body.quarto-dark .reveal .slides table:not(.gt_table) tr:last-child td,
 body.quarto-dark .reveal .slides table:not(.gt_table) {
-  border-bottom-color: var(--auto-dark-border-strong);
+  border-bottom-color: #3e4451 !important;
+}
+
+html.auto-dark-theme-dark .reveal table caption,
+body.auto-dark-theme-dark .reveal table caption,
+body.quarto-dark .reveal table caption {
+  color: #8b949e !important;
 }
 
 /* gt table font sizing (both modes) */
-.reveal .gt_table {
-  font-size: 0.92em !important;
-}
+.reveal .gt_table { font-size: 0.92em !important; }
 
 .reveal .gt_table .gt_footnotes,
 .reveal .gt_table .gt_source_notes,
@@ -235,54 +288,83 @@ body.quarto-dark .reveal .slides table:not(.gt_table) {
 }
 
 
-/* ── 8. One Dark — code blocks / cell output ─────────────────────────────── */
+/* ── 11. Code blocks / cell output ───────────────────────────────────────── */
 
 html.auto-dark-theme-dark .reveal .cell-output pre,
-body.auto-dark-theme-dark .reveal .cell-output pre,
-body.quarto-dark .reveal .cell-output pre,
 html.auto-dark-theme-dark .reveal .cell-output pre code,
-body.auto-dark-theme-dark .reveal .cell-output pre code,
-body.quarto-dark .reveal .cell-output pre code,
+html.auto-dark-theme-dark .reveal pre,
 html.auto-dark-theme-dark pre,
+body.auto-dark-theme-dark .reveal .cell-output pre,
+body.auto-dark-theme-dark .reveal .cell-output pre code,
+body.auto-dark-theme-dark .reveal pre,
 body.auto-dark-theme-dark pre,
+body.quarto-dark .reveal .cell-output pre,
+body.quarto-dark .reveal .cell-output pre code,
+body.quarto-dark .reveal pre,
 body.quarto-dark pre {
-  color:            var(--auto-dark-text) !important;
-  background-color: var(--auto-dark-panel) !important;
-  border-color:     var(--auto-dark-border-strong) !important;
+  color:            #abb2bf !important;
+  background-color: #21252b !important;
+  border-color:     #3e4451 !important;
 }
 
 html.auto-dark-theme-dark .reveal .cell-output,
 body.auto-dark-theme-dark .reveal .cell-output,
 body.quarto-dark .reveal .cell-output {
-  color: var(--auto-dark-text);
+  color: #abb2bf !important;
 }
 
-/* Slide number in dark mode */
+
+/* ── 12. Slide number ────────────────────────────────────────────────────── */
+/*
+ * #777777 is baked in with !important in clean.scss → override it.
+ */
+
 html.auto-dark-theme-dark .slide-number,
+html.auto-dark-theme-dark .reveal.has-logo .slide-number,
 body.auto-dark-theme-dark .slide-number,
-body.quarto-dark .slide-number {
-  color: var(--auto-dark-text-muted) !important;
+body.auto-dark-theme-dark .reveal.has-logo .slide-number,
+body.quarto-dark .slide-number,
+body.quarto-dark .reveal.has-logo .slide-number {
+  color: #5c6370 !important;
 }
 
 
-/* ── 9. One Dark — companion image visibility ────────────────────────────── */
+/* ── 13. Alerts / utilities ──────────────────────────────────────────────── */
+/*
+ * .alert colour ($accent2: #9a2515) is baked in.
+ */
+
+html.auto-dark-theme-dark .reveal .alert,
+body.auto-dark-theme-dark .reveal .alert,
+body.quarto-dark .reveal .alert {
+  color: #e06c75 !important;  /* One Dark red — replaces $accent2 */
+}
+
+html.auto-dark-theme-dark .reveal .footer,
+body.auto-dark-theme-dark .reveal .footer,
+body.quarto-dark .reveal .footer {
+  color: #5c6370 !important;  /* dimmed footer in dark mode */
+}
+
+
+/* ── 14. Companion image visibility ──────────────────────────────────────── */
 
 html.auto-dark-theme-light .auto-dark-render-dark,
 body.auto-dark-theme-light .auto-dark-render-dark,
-html.auto-dark-theme-dark .auto-dark-render-light,
-body.auto-dark-theme-dark .auto-dark-render-light {
+html.auto-dark-theme-dark  .auto-dark-render-light,
+body.auto-dark-theme-dark  .auto-dark-render-light {
   display: none !important;
 }
 
 html.auto-dark-theme-light .auto-dark-render-light,
 body.auto-dark-theme-light .auto-dark-render-light,
-html.auto-dark-theme-dark .auto-dark-render-dark,
-body.auto-dark-theme-dark .auto-dark-render-dark {
+html.auto-dark-theme-dark  .auto-dark-render-dark,
+body.auto-dark-theme-dark  .auto-dark-render-dark {
   display: block;
 }
 
 
-/* ── 10. ☾/☀ toggle button ───────────────────────────────────────────────── */
+/* ── 15. ☾/☀ toggle button ───────────────────────────────────────────────── */
 
 .auto-dark-switch {
   position: fixed;
@@ -302,30 +384,26 @@ body.auto-dark-theme-dark .auto-dark-render-dark {
   font: 400 16px/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   cursor: pointer;
   opacity: 0.72;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, opacity 120ms ease;
+  transition: background-color 120ms ease, border-color 120ms ease,
+              color 120ms ease, opacity 120ms ease;
 }
 
-.auto-dark-switch[data-auto-dark-target="dark"] .auto-dark-switch-icon::before {
-  content: "☾";
-}
-
-.auto-dark-switch[data-auto-dark-target="light"] .auto-dark-switch-icon::before {
-  content: "☀";
-}
+.auto-dark-switch[data-auto-dark-target="dark"]  .auto-dark-switch-icon::before { content: "☾"; }
+.auto-dark-switch[data-auto-dark-target="light"] .auto-dark-switch-icon::before { content: "☀"; }
 
 .auto-dark-switch:hover,
 .auto-dark-switch:focus-visible {
   outline: none;
-  border-color: var(--auto-dark-link, #61afef);
+  border-color: #61afef;
   background: rgba(97, 175, 239, 0.1);
-  color: var(--auto-dark-link, #61afef);
+  color: #61afef;
   opacity: 1;
 }
 
 html.auto-dark-theme-dark .auto-dark-switch,
 body.auto-dark-theme-dark .auto-dark-switch,
 body.quarto-dark .auto-dark-switch {
-  color: var(--auto-dark-text-muted);
+  color: #8b949e;
 }
 
 html.auto-dark-theme-dark .auto-dark-switch:hover,
@@ -335,12 +413,10 @@ body.auto-dark-theme-dark .auto-dark-switch:focus-visible,
 body.quarto-dark .auto-dark-switch:hover,
 body.quarto-dark .auto-dark-switch:focus-visible {
   background: rgba(97, 175, 239, 0.12);
-  color: var(--auto-dark-link);
+  color: #61afef;
   border-color: rgba(97, 175, 239, 0.36);
 }
 
 @media print {
-  .auto-dark-switch {
-    display: none !important;
-  }
+  .auto-dark-switch { display: none !important; }
 }
