@@ -22,12 +22,15 @@ tests/generated/
 tests/tests/
 
 # Quarto copies JS from _extensions/ next to the rendered output — ignore them
+/auto-dark-system.js
 /auto-dark-renderings.js
 /auto-dark-reveal-init.js
 /auto-dark-reveal.js
+/examples/auto-dark-system.js
 /examples/auto-dark-renderings.js
 /examples/auto-dark-reveal-init.js
 /examples/auto-dark-reveal.js
+/tests/auto-dark-system.js
 /tests/auto-dark-renderings.js
 /tests/auto-dark-reveal-init.js
 /tests/auto-dark-reveal.js

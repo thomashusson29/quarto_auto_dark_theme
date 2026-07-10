@@ -61,8 +61,8 @@ quarto render my-report.qmd
 That's it. Your document now has:
 
 - One Dark background (`#282c34`) in dark mode, Cosmo theme in light mode
-- Automatic OS-level dark mode on first load
-- Manual light/dark toggle in the document header
+- Automatic OS-level dark mode on first load and while the page is open
+- No persistent HTML light/dark toggle to block OS changes
 - Transparent plot backgrounds
 - Dark companion images for every figure
 - Styled `gt`/`gtsummary` tables
@@ -213,7 +213,8 @@ browser-side theme switch. This extension uses a hybrid approach:
 
 | Layer | Responsibility |
 |---|---|
-| **Quarto** | Native light/dark switch in HTML header; reads OS preference via `respect-user-color-scheme` |
+| **Quarto** | Uses light/dark Bootstrap stylesheets and reads OS preference via `respect-user-color-scheme` |
+| **System JS** | Clears Quarto's saved manual colour-scheme override so HTML pages keep following OS changes |
 | **Lua filter** | Injects a `prefers-color-scheme` CSS layer on first load (adapted from gadenbuie/quarto-auto-dark) |
 | **CSS** | One Dark palette for body, code, callouts, markdown tables, `gt`/`gtsummary` tables |
 | **R (`auto_dark_on()`)** | Sets `bg = "transparent"` on the graphics device; installs knitr plot hook |

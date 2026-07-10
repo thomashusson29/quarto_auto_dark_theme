@@ -226,16 +226,15 @@ A tip callout. Verify that the icon and text are legible.
 | include_graphics      | Dark companion shown          | ☐      |
 | Code block            | One Dark panel bg             | ☐      |
 | Callout               | One Dark panel bg + border    | ☐      |
-| Light/dark toggle     | Works; persists in reload     | ☐      |
 | OS dark mode          | Page starts dark automatically| ☐      |
+| OS theme switch       | Page follows browser changes  | ☐      |
 
 ---
 
 ## Test 10 — HTML document (this document itself)
 
 *The HTML document format is `auto-dark-html`. The page background must be
-`#282c34` in dark mode, and the light/dark switch in the Quarto header should
-toggle correctly.*
+`#282c34` in dark mode. HTML output follows the browser/OS colour scheme and
+does not expose Quarto's persistent light/dark toggle.*
 
-> Verify with the switch in the top-right corner (or set your OS to dark mode and
-> reload the page).
+> Verify by switching your OS/browser theme while the page is open.

@@ -9,8 +9,9 @@
  *   4. Markdown tables
  *   5. Code blocks
  *   6. Callouts
- *   7. Light / dark visibility helpers
- *   8. Figure background
+ *   7. System preference mode
+ *   8. Light / dark visibility helpers
+ *   9. Figure background
  *
  * The One Dark palette is defined here once. Do not duplicate these variables
  * in other CSS files — import or reference this file instead.
@@ -210,7 +211,19 @@ html.auto-dark-theme-dark .callout {
 }
 
 
-/* ── 7. Light / dark visibility helpers ──────────────────────────────────── */
+/* ── 7. System preference mode ───────────────────────────────────────────── */
+/*
+ * HTML output follows the OS/browser colour scheme. Hide Quarto's generated
+ * manual toggle because it writes localStorage and blocks system switching.
+ * RevealJS uses its own .auto-dark-switch and is not affected by this rule.
+ */
+
+.quarto-color-scheme-toggle {
+  display: none !important;
+}
+
+
+/* ── 8. Light / dark visibility helpers ──────────────────────────────────── */
 /*
  * Elements with .light-content are hidden in dark mode and vice versa.
  * Elements with .auto-dark-render-light / .auto-dark-render-dark are the
@@ -239,7 +252,7 @@ html.auto-dark-theme-dark .auto-dark-render-light {
 }
 
 
-/* ── 8. Figure background ────────────────────────────────────────────────── */
+/* ── 9. Figure background ────────────────────────────────────────────────── */
 /*
  * Ensure figure images have a transparent background in dark mode, so the
  * One Dark page background is visible through transparent plot areas.
@@ -255,20 +268,19 @@ html.auto-dark-theme-dark .cell-output-display img {
 }
 
 
-/* ── 9. @media fallback — OS preference without Quarto JS ────────────────── */
+/* ── 10. @media fallback — OS preference without Quarto JS ───────────────── */
 /*
- * Quarto's body.quarto-dark class is set by JS that reads localStorage.
- * If a user has previously clicked the manual toggle, localStorage can block
- * OS-level detection indefinitely.
+ * Quarto's body.quarto-dark class is set by JS that can read localStorage.
+ * auto-dark-system.js clears that stored preference so OS-level changes keep
+ * driving the page.
  *
  * This @media block mirrors ALL sections above so that the One Dark palette
  * applies via pure CSS whenever the OS is in dark mode — regardless of JS
  * or localStorage state.
  *
- * Specificity note: when the user has explicitly toggled light mode,
- * Quarto's JS adds body.quarto-light and swaps Bootstrap stylesheets.
- * body.quarto-light rules (higher specificity than bare selectors in @media)
- * take precedence, so the explicit user choice is still respected.
+ * Specificity note: these fallback rules only apply before/without Quarto's
+ * class switch. Once Quarto has applied body.quarto-dark or body.quarto-light,
+ * the class-scoped rules above control the full theme.
  */
 
 @media (prefers-color-scheme: dark) {
@@ -276,9 +288,6 @@ html.auto-dark-theme-dark .cell-output-display img {
    * Use body:not(.quarto-light) so these rules fire when:
    *   (a) body starts as quarto-light (hardcoded) then JS switches to quarto-dark, OR
    *   (b) no localStorage — Quarto JS will remove quarto-light and add quarto-dark.
-   *
-   * They do NOT fire when the user has explicitly chosen light mode
-   * (body.quarto-light stays after JS runs with localStorage="default").
    *
    * For table/code/figure elements, we scope to body:not(.quarto-light)
    * as an ancestor to achieve the same effect without :has() everywhere.

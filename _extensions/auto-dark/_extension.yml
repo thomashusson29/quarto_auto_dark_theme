@@ -20,16 +20,20 @@ contributes:
         dark: darkly
       # respect-user-color-scheme reads prefers-color-scheme at page load and
       # sets body.quarto-dark / body.quarto-light, which our CSS scopes to.
-      # The Lua filter adds a CSS media-query layer on top, but this option
-      # is the one that actually triggers the class-based One Dark styles.
+      # auto-dark-system.js clears Quarto's persisted manual override so the
+      # page keeps following OS/browser changes, like gadenbuie's auto-dark.
       respect-user-color-scheme: true
       css:
         - auto-dark.css
         - auto-dark-plot-filter.css
+      include-in-header:
+        - text: |
+            <script src="auto-dark-system.js"></script>
       include-after-body:
         - text: |
             <script src="auto-dark-renderings.js"></script>
       format-resources:
+        - auto-dark-system.js
         - auto-dark-renderings.js
 
     revealjs:

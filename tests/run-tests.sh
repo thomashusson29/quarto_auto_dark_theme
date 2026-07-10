@@ -73,6 +73,7 @@ BAD=$(grep -rn '.\{300,\}' \
   _extensions/auto-dark/auto-dark-plot-filter.css \
   _extensions/auto-dark/auto-dark-reveal.css \
   _extensions/auto-dark/auto-dark-reveal.js \
+  _extensions/auto-dark/auto-dark-system.js \
   _extensions/auto-dark/auto-dark-renderings.js \
   2>/dev/null || true)
 

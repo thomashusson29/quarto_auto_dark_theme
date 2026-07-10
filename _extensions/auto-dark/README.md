@@ -4,8 +4,9 @@ Reusable Quarto formats for One Dark HTML documents and RevealJS slides.
 
 ## Formats
 
-- `auto-dark-html`: Quarto HTML with native light/dark switching, `cosmo` in
-  light mode and `darkly` layered with One Dark CSS in dark mode.
+- `auto-dark-html`: Quarto HTML that follows the browser/OS colour scheme,
+  with `cosmo` in light mode and `darkly` layered with One Dark CSS in dark
+  mode.
 - `auto-dark-revealjs`: RevealJS slides with a small icon-only switch.
 - `auto-dark-clean-revealjs`: sibling format for clean RevealJS slides.
 
@@ -29,8 +30,8 @@ The default mode is `mode = "robust"`:
 - every generated PNG/JPEG/WebP gets a companion `*-auto-dark.*` image;
 - local PNG/JPEG/WebP files inserted with `knitr::include_graphics()` also get
   a companion dark image when possible;
-- the browser switch shows the light image in light mode and the companion dark
-  image in dark mode;
+- the browser/OS colour scheme shows the light image in light mode and the
+  companion dark image in dark mode;
 - if a companion cannot be generated, CSS filtering remains as a fallback;
 - `flowchart::fc_draw()` defaults to `canvas_bg = "transparent"` unless the
   chunk explicitly provides another value.
