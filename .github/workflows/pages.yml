@@ -56,6 +56,7 @@ jobs:
 
           cp -R template_files _site/template_files
           cp -R generated _site/generated
+          cp auto-dark-system.js _site/auto-dark-system.js
           cp auto-dark-renderings.js _site/auto-dark-renderings.js
 
           cp examples/revealjs.html _site/examples/revealjs.html
